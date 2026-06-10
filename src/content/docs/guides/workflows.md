@@ -3,7 +3,7 @@ title: Workflows
 description: Build multi-step pipelines with @eidentic/workflow — chain, parallel, suspend/resume, durable run store.
 ---
 
-`@eidentic/workflow` lets you compose typed async pipelines from small reusable steps. It is separate from the agent runtime: workflows orchestrate any async logic, and an `agentStep` adapter makes an `Agent` a drop-in step.
+`@eidentic/workflow` composes typed async pipelines from small reusable steps. It is decoupled from the agent runtime — workflows orchestrate any async logic, and an `agentStep` adapter makes any `Agent` a drop-in step.
 
 ## Install
 

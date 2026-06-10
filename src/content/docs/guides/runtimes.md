@@ -1,9 +1,9 @@
 ---
 title: Runtimes
-description: Runtime and package manager compatibility matrix for Eidentic.
+description: Node, Bun, Deno, and edge runtime support — compatibility matrix, safe-import rules, and package edge-safety table.
 ---
 
-Eidentic is verified on Node, Bun, Deno, and edge runtimes. This page summarises what works where and how to set up each.
+Eidentic is verified on Node, Bun, Deno, and edge runtimes. This page covers what works where and how to configure each.
 
 ## Package managers
 

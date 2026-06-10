@@ -1,9 +1,9 @@
 ---
 title: React Hooks Reference
-description: useEidenticStream, useAsyncRun, useRunStatus, useWorkflowList, useWorkflowRun — props, returns, and examples.
+description: useEidenticStream, useAsyncRun, useRunStatus, useWorkflowList, useWorkflowRun — complete options and return type reference.
 ---
 
-`@eidentic/react` provides five hooks that cover streaming chat, fire-and-poll async runs, and workflow inspection.
+`@eidentic/react` ships five hooks: streaming chat, fire-and-poll async runs, and workflow inspection.
 
 ## Install
 

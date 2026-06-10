@@ -1,9 +1,9 @@
 ---
 title: Server Production Guide
-description: Webhooks, CORS, graceful drain, pre-auth rate limiting, maxInputChars, maxAsyncRuns, and workflowRuns registry injection.
+description: Webhooks, CORS, pre-auth rate limiting, graceful drain, input caps, and workflow registry injection for @eidentic/server in production.
 ---
 
-`@eidentic/server` is designed for production from day one. This guide covers the hardening options available in `ServerOptions`.
+This guide covers the hardening options available in `ServerOptions` for production deployments of `@eidentic/server`.
 
 ## Webhooks
 

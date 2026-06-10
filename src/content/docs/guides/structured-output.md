@@ -1,9 +1,9 @@
 ---
 title: Structured Output
-description: Get typed, validated JSON objects from agent.query() using outputSchema.
+description: Get typed, validated JSON objects from agent.query() using a Zod outputSchema.
 ---
 
-Eidentic supports structured output out of the box. Pass an `outputSchema` (a Zod schema) to `agent.query()` and the result's `.object` field will contain a validated, typed object.
+Pass an `outputSchema` (a Zod schema) to `agent.query()` and the terminal result's `.object` field contains a validated, typed object.
 
 ## Basic usage
 

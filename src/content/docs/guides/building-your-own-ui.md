@@ -1,6 +1,6 @@
 ---
 title: Building your own UI
-description: Three paths for connecting a custom frontend to a Eidentic agent — AI SDK UI ecosystem, headless hooks, and copy-paste components.
+description: Three paths for connecting a custom frontend to an Eidentic agent — AI SDK UI ecosystem, headless hooks, and copy-paste components.
 ---
 
 Eidentic has no prescribed frontend. You own the UI and you pick how deep the integration goes. There are three paths, ordered from least code to most control.
@@ -109,7 +109,7 @@ export const POST = withEidentic(agent, { protocol: "ndjson" });
 
 ### `useAgent` and `useEidenticStream`
 
-`useAgent` is the main hook. It targets a Eidentic server by agent ID:
+`useAgent` is the main hook. It targets an Eidentic server by agent ID:
 
 ```tsx
 "use client";
@@ -261,9 +261,9 @@ Because you own the code, there is no version coupling — update Eidentic, and 
 
 ## CopilotKit interop
 
-If your product already uses CopilotKit as the user-facing chat layer, you can point it at a Eidentic backend. CopilotKit speaks the AI SDK UI protocol on the wire, and that is exactly what `withEidentic` emits by default.
+If your product already uses CopilotKit as the user-facing chat layer, you can point it at an Eidentic backend. CopilotKit speaks the AI SDK UI protocol on the wire, and that is exactly what `withEidentic` emits by default.
 
-Set up a Eidentic route as you would for `useChat`, then configure CopilotKit to call it:
+Set up an Eidentic route as you would for `useChat`, then configure CopilotKit to call it:
 
 ```ts
 // app/api/copilotkit/route.ts

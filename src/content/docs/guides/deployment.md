@@ -1,11 +1,9 @@
 ---
 title: Deployment
-description: Deploy a Eidentic agent to Node.js, Docker, Cloudflare Workers, Deno Deploy, Vercel, and Next.js.
+description: Deploy an Eidentic agent to Node.js, Docker, Cloudflare Workers, Deno Deploy, or Next.js.
 ---
 
-This guide covers every common way to ship a Eidentic agent to production: as a
-plain Node.js server, inside Docker, on serverless/edge platforms, and inside a
-Next.js app.
+This guide covers the common deployment targets: Node.js, Docker, serverless/edge platforms, and Next.js.
 
 :::note[Runtime matrix]
 See the [Runtimes guide](/guides/runtimes) for the full compatibility matrix

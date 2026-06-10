@@ -1,9 +1,9 @@
 ---
 title: Observability
-description: Langfuse OTLP exporter options and MCP governance — tracing agent runs, redacting attributes, and auditing tool calls.
+description: Trace agent runs with the Langfuse OTLP exporter — attribute redaction, MCP audit events, and self-hosted options.
 ---
 
-Eidentic instruments the agent loop via a `TracerPort` interface. Wire in any OTLP-compatible backend without changing your agent code.
+Eidentic instruments every agent turn, tool call, and memory operation via a `TracerPort` interface. Swap or configure the backend without changing agent code.
 
 ## Langfuse exporter
 

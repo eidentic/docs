@@ -1,9 +1,9 @@
 ---
 title: Evals in CI
-description: "@eidentic/eval — eidentic eval CLI flags, compareReports, regression gating, and the GitHub Actions workflow."
+description: "@eidentic/eval — CI eval runner with threshold gating, baseline regression detection, and a ready-made GitHub Actions workflow."
 ---
 
-`@eidentic/eval` is the evaluation harness for measuring agent quality. The `eidentic eval` CLI runs your eval config, gates on a pass-rate threshold, compares against a committed baseline, and generates a Markdown report suitable for PR comments.
+`@eidentic/eval` measures agent quality. The `eidentic eval` CLI runs your config, gates on a pass-rate threshold, compares against a committed baseline, and writes a Markdown report ready for PR comments.
 
 ## Install
 

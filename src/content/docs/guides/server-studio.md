@@ -3,7 +3,7 @@ title: Server & Studio
 description: Run agents as a REST+SSE service with @eidentic/server and explore them in Studio.
 ---
 
-Eidentic is a **library first** — you embed `Agent` directly in your own backend. But when you want a dedicated, multi-tenant agent service with auth, rate-limiting, and streaming out of the box, `@eidentic/server` gives you a ready-made Hono application.
+Eidentic is a library first — embed `Agent` directly in your own backend. When you want a standalone multi-tenant service with auth, rate-limiting, and streaming, `@eidentic/server` gives you a ready-made Hono application.
 
 ## `@eidentic/server`
 

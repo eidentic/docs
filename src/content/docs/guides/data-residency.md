@@ -3,7 +3,7 @@ title: Data Residency & Local Models
 description: Run fully local or air-gapped — local providers, LocalEmbedder, libSQL embedded store, route-by-sensitivity, GDPR erasure.
 ---
 
-Eidentic's ports-and-adapters architecture means every external dependency — the model, the embedder, the store — is swappable. You can run entirely on-device with no data leaving the machine.
+Every external dependency — model, embedder, store — is a swappable port. You can run entirely on-device with no data leaving the machine.
 
 ## Explicit provider pattern
 

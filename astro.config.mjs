@@ -3,11 +3,12 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
 export default defineConfig({
+  site: "https://eidentic.dev",
   integrations: [
     starlight({
       title: "Eidentic",
       description:
-        "Production-grade agentic AI for TypeScript — self-improving memory, self-developing skills, and multi-agent orchestration.",
+        "Agents that remember. An open-source TypeScript SDK with self-improving memory and production fundamentals built in.",
       social: {
         github: "https://github.com/eidentic/eidentic",
       },
@@ -21,10 +22,10 @@ export default defineConfig({
           label: "Guides",
           items: [
             {
-              label: "Core",
+              label: "Integrations",
               items: [
-                { label: "Next.js Integration", link: "/guides/nextjs" },
-                { label: "Building your own UI", link: "/guides/building-your-own-ui" },
+                { label: "Next.js", link: "/guides/nextjs" },
+                { label: "Custom UI", link: "/guides/building-your-own-ui" },
                 { label: "Runtimes", link: "/guides/runtimes" },
                 { label: "Deployment", link: "/guides/deployment" },
               ],
@@ -32,12 +33,12 @@ export default defineConfig({
             {
               label: "Agent",
               items: [
-                { label: "Memory 101", link: "/guides/memory" },
+                { label: "Memory", link: "/guides/memory" },
                 { label: "Memory Governance", link: "/guides/memory-governance" },
                 { label: "Structured Output", link: "/guides/structured-output" },
                 { label: "Tools & Web Search", link: "/guides/tools" },
                 { label: "Agent Hooks", link: "/guides/agent-hooks" },
-                { label: "Citations & Grounded Outputs", link: "/guides/citations" },
+                { label: "Citations & Grounded Output", link: "/guides/citations" },
               ],
             },
             {
@@ -50,19 +51,19 @@ export default defineConfig({
               label: "Server",
               items: [
                 { label: "Server & Studio", link: "/guides/server-studio" },
-                { label: "Server Production Guide", link: "/guides/server-hardening" },
+                { label: "Production Hardening", link: "/guides/server-hardening" },
               ],
             },
             {
               label: "Frontend",
               items: [
-                { label: "React Hooks Reference", link: "/guides/react-hooks" },
+                { label: "React Hooks", link: "/guides/react-hooks" },
               ],
             },
             {
               label: "Models & Cost",
               items: [
-                { label: "Model Routing & Cost Recipes", link: "/guides/model-routing" },
+                { label: "Model Routing", link: "/guides/model-routing" },
                 { label: "Prompt Versioning", link: "/guides/prompt-versioning" },
               ],
             },

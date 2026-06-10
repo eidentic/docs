@@ -1,9 +1,9 @@
 ---
 title: Tools & Web Search
-description: Built-in tools, web search providers, and SSRF-guarded fetch.
+description: Built-in tools for file access, bash execution, and web search — with SSRF guarding and permission control.
 ---
 
-Eidentic ships a set of built-in tools in `@eidentic/tools` for file access, bash execution, and web operations. All tools run through `SandboxPort` — on `NoopSandbox` (the default), untrusted execution is refused unless you explicitly enable it.
+`@eidentic/tools` provides built-in tools for file access, bash execution, and web operations. All tools run through `SandboxPort` — untrusted execution is refused by default unless you supply a sandbox explicitly.
 
 ## Install
 

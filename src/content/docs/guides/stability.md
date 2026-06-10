@@ -3,9 +3,7 @@ title: Stability & Versioning
 description: Eidentic's versioning contract — stability tiers, breaking-change policy, conformance suite promise.
 ---
 
-Eidentic is pre-1.0 and moving toward a stable v1. Stability is treated as a differentiator: every API is explicitly classified, and breaking changes only happen at predictable version boundaries.
-
-The canonical source of truth is [`STABILITY.md`](https://github.com/eidentic/eidentic/blob/main/STABILITY.md) in the repository root. This page is a summary.
+Eidentic is pre-1.0. Every API is classified into a stability tier and breaking changes happen only at predictable version boundaries. The canonical reference is [`STABILITY.md`](https://github.com/eidentic/eidentic/blob/main/STABILITY.md) in the repository root.
 
 ---
 

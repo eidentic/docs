@@ -3,7 +3,7 @@ title: Next.js Integration
 description: Wire Eidentic into a Next.js App Router project with @eidentic/nextjs and @eidentic/libsql.
 ---
 
-`@eidentic/nextjs` provides a single `withEidentic(agent)` helper that turns any Eidentic agent into a Next.js App Router route handler, handling streaming, request cancellation, and session wiring automatically.
+`@eidentic/nextjs` provides `withEidentic(agent)` — a one-line App Router route handler that handles streaming, request cancellation, and session wiring.
 
 ## Install
 

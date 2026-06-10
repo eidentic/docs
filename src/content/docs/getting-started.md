@@ -1,9 +1,9 @@
 ---
 title: Getting Started
-description: Install Eidentic and build your first agent in under five minutes.
+description: Install Eidentic and build your first memory-enabled agent in minutes.
 ---
 
-Eidentic is a TypeScript library for building production-grade AI agents. It ships with self-improving memory, self-developing skills, multi-agent orchestration, and the production fundamentals (durability, cost control, rate-limiting, security, GDPR erasure) baked in — not bolted on.
+Eidentic is an open-source TypeScript SDK for agents that remember. Self-improving memory, self-developing skills, and the production fundamentals — cost control, rate-limiting, GDPR erasure — are built in, not bolted on.
 
 ## Install
 
@@ -66,7 +66,7 @@ for await (const event of agent.query("What did we decide last week?", {
 1. **Install** — `npm install eidentic ai @ai-sdk/anthropic`
 2. **Create an agent** — pass `id`, `model`, and `store`
 3. **Call `agent.query()`** — iterate the stream, write text deltas
-4. **Add memory** — attach a `Memory` instance and pass `userId` to enable cross-session recall ([Memory 101](/guides/memory))
+4. **Add memory** — attach a `Memory` instance and pass `userId` to activate cross-session recall ([Memory](/guides/memory))
 5. **Deploy** — embed in Express, Next.js App Router, Cloudflare Workers, or use `@eidentic/server` for a ready-made Hono service ([Server & Studio](/guides/server-studio))
 
 ## Scaffold a project

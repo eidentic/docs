@@ -1,9 +1,9 @@
 ---
 title: API Reference
-description: Per-package API reference for all Eidentic packages.
+description: Package index, key types, port interfaces, and testing utilities for Eidentic.
 ---
 
-Full generated TypeDoc reference is in progress. Each package ships inline JSDoc on every exported symbol — browse the source or use your editor's hover docs.
+Every exported symbol ships inline JSDoc — hover in your editor or browse the source links below.
 
 ## Package index
 

@@ -3,7 +3,7 @@ title: Citations & Grounded Outputs
 description: RAG ingestion with source provenance, structured output via outputSchema, and MemorySnippet metadata.
 ---
 
-Eidentic surfaces provenance at three layers: RAG ingestion attaches source citations to every chunk, structured output validates the model's final object against a Zod schema, and recalled memory snippets carry `ingestedAt` timestamps and arbitrary metadata.
+Eidentic surfaces provenance at three layers: RAG ingestion tags every chunk with its source, `outputSchema` validates the model's final object, and recalled snippets carry `ingestedAt` timestamps and metadata.
 
 ## RAG ingestion with citations
 

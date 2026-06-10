@@ -3,7 +3,7 @@ title: Model Routing & Cost Recipes
 description: withFallback, routeModel, byTokenEstimate, cachedModel — route requests to the right model tier and control cost.
 ---
 
-`@eidentic/model` ships composable wrappers that implement `ModelPort`, so they drop into `AgentConfig.model` without any other changes.
+`@eidentic/model` ships composable wrappers that implement `ModelPort` — drop any of them into `AgentConfig.model` unchanged.
 
 ## `withFallback` — resilience + cost optimization
 

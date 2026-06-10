@@ -1,9 +1,9 @@
 ---
 title: Agent Hooks
-description: Intercept tool use, enforce permissions, track cost thresholds, and type terminal results with AgentConfig hooks.
+description: Intercept tool dispatch, enforce permissions, track cost thresholds, and narrow terminal results with AgentConfig hooks.
 ---
 
-`AgentConfig` exposes several hooks for observability, access control, and lifecycle management. All hooks are optional and composable.
+`AgentConfig` exposes hooks for observability, access control, and lifecycle management. All hooks are optional and composable.
 
 ## `onPreToolUse`
 

@@ -1,6 +1,6 @@
 ---
 title: Browser Tools
-description: "@eidentic/browser — PageLike injection, the four browser automation tools, allowlist/SSRF posture, Playwright wiring."
+description: "Playwright-backed browser automation for agents — four tools, domain allowlisting, and SSRF defense at every navigation."
 ---
 
 `@eidentic/browser` gives agents four browser automation tools over an injected `PageLike` surface. You supply the page (a Playwright `Page` or any structural equivalent); the tools enforce SSRF guards and domain allowlisting.

@@ -3,7 +3,7 @@ title: Benchmarks
 description: Write-quality and temporal point-in-time benchmarks — what they measure, how to run them, and honest-methodology rules for publishing numbers.
 ---
 
-The `@eidentic/bench` package ships two standalone benchmarks that complement retrieval-recall metrics by measuring the **write side** of memory:
+`@eidentic/bench` ships two standalone benchmarks that complement retrieval-recall metrics by measuring the **write side** of memory:
 
 - **Write-quality benchmark** (`runWriteQualityBench`) — contradiction suppression, junk resistance, duplicate resistance.
 - **Temporal point-in-time benchmark** (`runTemporalBench`) — "what was X's property at a past date?" queries against the temporal knowledge graph.

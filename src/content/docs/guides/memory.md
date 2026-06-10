@@ -1,9 +1,9 @@
 ---
-title: Memory 101
-description: Understand Eidentic's three memory layers and wire them into your agent.
+title: Memory
+description: Wire Eidentic's three memory layers into your agent — session history, cross-session recall, and a temporal knowledge graph.
 ---
 
-Eidentic's memory engine goes far beyond storing chat history. It is a four-tier system that makes an agent genuinely remember things across sessions, improve over time, and reason about facts that change. Here's how it fits together and how to use it.
+Eidentic's memory engine has four tiers: per-session history, per-user cross-session recall, a self-developing skills layer, and a temporal knowledge graph. This guide covers how each tier works and how to configure it.
 
 ## The three layers you configure
 
@@ -22,7 +22,7 @@ This layer is free — it happens whenever you pass a `sessionId`.
 
 ### Layer 2: Per-user cross-session memory (requires `Memory` + `userId`)
 
-This is where Eidentic's memory engine activates. When you attach a `Memory` instance to the agent and pass a `userId`, the engine builds durable, self-improving knowledge about that user across all their sessions.
+Attach a `Memory` instance and pass a `userId` at query time. The engine builds durable, self-improving knowledge about that user across all their sessions.
 
 ```ts
 import { Agent, AIModel, SqliteStore } from "eidentic";

@@ -3,9 +3,9 @@ title: Memory Governance
 description: State-transition timelines, corroboration tiers, consent enforcement, portable export, and identity merge.
 ---
 
-The memory governance layer sits on top of the core `Memory` class and gives you precise control over the full lifecycle of stored knowledge: how facts evolve over time, when they become stale, which categories of personal data may be retained, how to export data portably, and how to merge scopes when a user authenticates.
+The governance layer extends `Memory` with full lifecycle control: versioned facts, staleness tiers, consent enforcement, portable export, and anonymous-to-authenticated identity merge.
 
-All APIs documented here require a `graph` backend in your `Memory` instance.
+All APIs on this page require a `graph` backend in your `Memory` instance.
 
 ```ts
 import { Memory } from "@eidentic/memory";

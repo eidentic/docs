@@ -1,6 +1,6 @@
 ---
 title: Prompt Versioning
-description: "@eidentic/prompts — registry, named tags as deploy/rollback, canary traffic splitting, filePromptStore."
+description: "Immutable prompt versions, named deploy/rollback tags, and deterministic canary splits — no external database required."
 ---
 
 `@eidentic/prompts` gives every prompt body an immutable version number, named deployment tags, and deterministic canary splitting — with no external database required.
