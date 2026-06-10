@@ -9,9 +9,7 @@ export default defineConfig({
       title: "Eidentic",
       description:
         "Agents that remember. An open-source TypeScript SDK with self-improving memory and production fundamentals built in.",
-      social: {
-        github: "https://github.com/eidentic/eidentic",
-      },
+      social: [{ icon: "github", label: "GitHub", href: "https://github.com/eidentic/eidentic" }],
       customCss: ["./src/custom.css"],
       sidebar: [
         {
