@@ -3,7 +3,7 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
 export default defineConfig({
-  site: "https://eidentic.dev",
+  site: "https://docs.eidentic.dev",
   integrations: [
     starlight({
       title: "Eidentic",
