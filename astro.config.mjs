@@ -7,6 +7,12 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Eidentic",
+      favicon: "/favicon.svg",
+      logo: {
+        light: "./src/assets/mark-light.svg",
+        dark: "./src/assets/mark-dark.svg",
+        alt: "eidentic",
+      },
       description:
         "Agents that remember. An open-source TypeScript SDK with self-improving memory and production fundamentals built in.",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/eidentic/eidentic" }],

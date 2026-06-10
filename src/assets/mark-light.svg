@@ -1,0 +1,7 @@
+<svg viewBox="0 0 156 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- eidentic mark — Light cut, for light backgrounds -->
+  <path d="M 89.8 40.5 A 34 34 0 1 0 89.8 79.5" fill="none" stroke="#16161a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 30 60 H 128" fill="none" stroke="#16161a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 128 60 V 94" fill="none" stroke="#16161a" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="128" cy="24" r="7.5" fill="#f5a524"/>
+</svg>
