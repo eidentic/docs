@@ -100,6 +100,14 @@ const config: Config = {
           "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.",
       },
     ],
+    [
+      // Per-page "Copy page / View as Markdown / Open in ChatGPT / Claude / Perplexity" actions.
+      "docusaurus-plugin-copy-page-button",
+      {
+        enabledActions: ["copy", "view", "chatgpt", "claude", "perplexity"],
+        generateMarkdownRoutes: true,
+      },
+    ],
   ],
 
   presets: [

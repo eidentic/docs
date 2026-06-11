@@ -27,6 +27,7 @@
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/tsconfig": "3.10.1",
     "@docusaurus/types": "3.10.1",
+    "docusaurus-plugin-copy-page-button": "^0.8.1",
     "docusaurus-plugin-llms": "^0.4.0",
     "typescript": "~5.6.2"
   },
