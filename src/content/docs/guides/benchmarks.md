@@ -1,6 +1,6 @@
 ---
 title: Benchmarks
-description: Write-quality and temporal point-in-time benchmarks — what they measure, how to run them, and honest-methodology rules for publishing numbers.
+description: Answer-accuracy on LongMemEval and LoCoMo (memory vs full-context baseline), plus write-quality and temporal point-in-time benchmarks and honest-methodology rules.
 ---
 
 `@eidentic/bench` ships two standalone benchmarks that complement retrieval-recall metrics by measuring the **write side** of memory:
@@ -9,6 +9,32 @@ description: Write-quality and temporal point-in-time benchmarks — what they m
 - **Temporal point-in-time benchmark** (`runTemporalBench`) — "what was X's property at a past date?" queries against the temporal knowledge graph.
 
 Both benchmarks are deterministic and infrastructure-free (no real model, no network) when run against the built-in fixture sets. Results include cost-transparency fields alongside accuracy metrics.
+
+---
+
+## Answer accuracy — memory vs full-context (June 2026)
+
+On two public long-term-memory benchmarks, Eidentic's retrieval-based memory **beats the full-context baseline** at a fraction of the tokens. Both rows per benchmark use the same script, models, and seed, on the full split, with the full-context baseline included.
+
+### LongMemEval (`longmemeval_s`, 500 questions, ~115k-token haystacks)
+
+| Mode | Single-session (user) | Single-session (asst.) | Single-session (pref.) | Multi-session | Temporal | Knowledge update | **Overall** | Tokens/query |
+|---|---|---|---|---|---|---|---|---|
+| Full-context baseline | 67.1% | 73.2% | 3.3% | 27.8% | 20.3% | 66.7% | **41.0%** | 99,435 |
+| Eidentic memory | **84.3%** | **92.9%** | **26.7%** | **42.1%** | **34.6%** | **70.5%** | **55.2%** | **2,550** |
+
+Memory wins on **all six** question types and by **+14.2 points overall** at **~39× fewer tokens/query**. When ~115k tokens of haystack are stuffed into the context window, the relevant evidence is lost among ~50 sessions of distractors; targeted retrieval surfaces it.
+
+### LoCoMo (1,540 questions)
+
+| Mode | Multi-hop | Temporal | Open-domain | Single-hop | **Overall** | Cat-5 refusal | Tokens/query |
+|---|---|---|---|---|---|---|---|
+| Full-context baseline | 46.8% | 31.2% | 28.1% | 81.9% | **61.6%** | 69.5% | 19,030 |
+| Eidentic memory | 30.5% | **43.3%** | 28.1% | 68.5% | 53.8% | **85.2%** | **893** |
+
+On LoCoMo's smaller haystacks full-context is competitive overall, but memory still wins on **temporal reasoning (+12.1pp)** and **adversarial robustness (+15.7pp)** at **~21× fewer tokens**.
+
+**Configuration (both):** answer + judge model `gpt-4o-mini`, embedder `text-embedding-3-small`, topK 10, seed 42, single run. The gpt-4o-mini judge is lenient relative to humans — numbers are comparable within a table, not across differently-judged tables. Datasets: LongMemEval (MIT) and LoCoMo (CC BY-NC) — raw data is not redistributed; only aggregate results are published. Full methodology and reproduction commands ship in the repo's `docs/BENCHMARKS.md` and `packages/bench/BASELINES.md`.
 
 ---
 
