@@ -48,6 +48,58 @@ const config: Config = {
         href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap",
       },
     },
+    {
+      // schema.org JSON-LD: entity resolution for AI assistants + Google AI Overviews.
+      tagName: "script",
+      attributes: { type: "application/ld+json" },
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://eidentic.dev/#org",
+            name: "Eidentic",
+            url: "https://eidentic.dev",
+            sameAs: [
+              "https://github.com/eidentic",
+              "https://www.npmjs.com/package/eidentic",
+            ],
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://eidentic.dev/#sdk",
+            name: "Eidentic",
+            applicationCategory: "DeveloperApplication",
+            operatingSystem: "Node.js, Bun, Deno, Edge",
+            description:
+              "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.",
+            url: "https://eidentic.dev",
+            codeRepository: "https://github.com/eidentic/eidentic",
+            programmingLanguage: "TypeScript",
+            license: "https://www.apache.org/licenses/LICENSE-2.0",
+            offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            publisher: { "@id": "https://eidentic.dev/#org" },
+          },
+        ],
+      }),
+    },
+  ],
+
+  plugins: [
+    [
+      "docusaurus-plugin-llms",
+      {
+        // Generates /llms.txt (curated index) + /llms-full.txt (full content) + per-page .md
+        // at build time, so IDE agents (Cursor, Claude Code) can consume the docs directly.
+        generateLLMsTxt: true,
+        generateLLMsFullTxt: true,
+        generateMarkdownFiles: true,
+        docsDir: "docs",
+        title: "Eidentic",
+        description:
+          "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.",
+      },
+    ],
   ],
 
   presets: [
