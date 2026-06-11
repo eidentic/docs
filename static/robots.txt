@@ -38,5 +38,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+# Content Signals (contentsignals.org / draft-romm-aipref-contentsignals):
+# our docs exist to be found, cited, and used by agents — opt in to all.
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 Sitemap: https://docs.eidentic.dev/sitemap.xml
