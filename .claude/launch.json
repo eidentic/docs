@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "eid-docs",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "build", "-p", "4178", "--no-clipboard"],
+      "port": 4178
+    }
+  ]
+}

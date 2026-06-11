@@ -1,0 +1,750 @@
+/* ============================================================
+   Eidentic Docs — Brand theme
+   Palette: night #0f1117 · bone #e8e8ea · ember #f5a524 · mist #6b6b73
+   ============================================================ */
+
+/* --- Google Fonts already loaded via headTags in config --- */
+
+/* ============================================================
+   Infima CSS variable overrides
+   ============================================================ */
+
+:root {
+  /* Ember accent — primary color shades */
+  --ifm-color-primary:         #f5a524;
+  --ifm-color-primary-dark:    #e8961a;
+  --ifm-color-primary-darker:  #db8910;
+  --ifm-color-primary-darkest: #b87010;
+  --ifm-color-primary-light:   #f7b145;
+  --ifm-color-primary-lighter: #f9be66;
+  --ifm-color-primary-lightest:#fcd494;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --ifm-font-size-base: 15px;
+  --ifm-line-height-base: 1.65;
+
+  /* Layout */
+  --ifm-navbar-height: 56px;
+  --ifm-spacing-horizontal: 1.25rem;
+
+  /* Links */
+  --ifm-link-color: var(--ifm-color-primary);
+  --ifm-link-hover-color: var(--ifm-color-primary-light);
+
+  /* Code */
+  --ifm-code-font-size: 13px;
+  --ifm-code-border-radius: 4px;
+  --ifm-code-padding-horizontal: 0.35em;
+  --ifm-code-padding-vertical: 0.15em;
+
+  /* Tables */
+  --ifm-table-border-color: rgba(255,255,255,0.08);
+
+  /* Admonitions */
+  --ifm-color-warning: #f5a524;
+  --ifm-color-warning-dark: #e8961a;
+  --ifm-color-info: #4d9de0;
+}
+
+/* ============================================================
+   DARK MODE (primary target)
+   ============================================================ */
+
+[data-theme='dark'] {
+  /* Backgrounds */
+  --ifm-background-color:         #0f1117;
+  --ifm-background-surface-color: #15171d;
+  --ifm-navbar-background-color:  #0c0e13;
+  --ifm-footer-background-color:  #0c0e13;
+  --ifm-sidebar-background:       #0f1117;
+
+  /* Text */
+  --ifm-font-color-base:          #e8e8ea;
+  --ifm-font-color-secondary:     #9a9aa4;
+  --ifm-heading-color:            #f0f0f2;
+
+  /* Borders */
+  --ifm-toc-border-color:         rgba(255,255,255,0.07);
+  --ifm-hr-border-color:          rgba(255,255,255,0.07);
+  --ifm-color-emphasis-300:       rgba(255,255,255,0.1);
+  --ifm-navbar-border-color:      rgba(255,255,255,0.06);
+
+  /* Code blocks */
+  --ifm-code-background:          #1a1d24;
+  --ifm-pre-background:           #12141a;
+  --ifm-pre-border-radius:        8px;
+  --prism-background-color:       #12141a;
+
+  /* Cards / panels */
+  --ifm-card-background-color:    #15171d;
+  --ifm-alert-background-color:   #1a1d24;
+
+  /* Sidebar active */
+  --ifm-menu-color-active:        var(--ifm-color-primary);
+  --ifm-menu-color:               #9a9aa4;
+  --ifm-menu-color-background-active: rgba(245,165,36,0.10);
+  --ifm-menu-color-background-hover:  rgba(255,255,255,0.04);
+
+  /* Table */
+  --ifm-table-stripe-background:  rgba(255,255,255,0.025);
+  --ifm-table-border-color:       rgba(255,255,255,0.07);
+
+  /* Inline code */
+  --ifm-code-background: rgba(245,165,36,0.10);
+  color-scheme: dark;
+}
+
+/* ============================================================
+   LIGHT MODE
+   ============================================================ */
+
+[data-theme='light'] {
+  --ifm-background-color:         #ffffff;
+  --ifm-background-surface-color: #f8f8fb;
+  --ifm-navbar-background-color:  #ffffff;
+  --ifm-footer-background-color:  #f0f0f3;
+  --ifm-font-color-base:          #16161a;
+  --ifm-heading-color:            #0d0d11;
+  --ifm-code-background:          rgba(245,165,36,0.10);
+  --ifm-pre-background:           #f4f4f7;
+  --prism-background-color:       #f4f4f7;
+  --ifm-toc-border-color:         rgba(0,0,0,0.08);
+  --ifm-table-border-color:       rgba(0,0,0,0.08);
+  --ifm-menu-color-active:        #d4880e;
+  --ifm-menu-color-background-active: rgba(245,165,36,0.08);
+}
+
+/* ============================================================
+   GLOBAL RESETS & BASE
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+
+.navbar {
+  border-bottom: 1px solid var(--ifm-navbar-border-color, rgba(255,255,255,0.06));
+  box-shadow: none;
+  padding: 0 1.25rem;
+  height: var(--ifm-navbar-height);
+}
+
+.navbar__brand {
+  gap: 8px;
+  align-items: center;
+}
+
+/* Navbar title — monospace wordmark */
+.navbar__title {
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ifm-heading-color);
+}
+
+.navbar__logo img {
+  border-radius: 0;
+}
+
+.navbar__item {
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+/* GitHub / npm links */
+.navbar__item.navbar__link[href*="github"],
+.navbar__item.navbar__link[href*="npm"] {
+  color: var(--ifm-font-color-secondary);
+  font-size: 13px;
+}
+
+.navbar__item.navbar__link[href*="github"]:hover,
+.navbar__item.navbar__link[href*="npm"]:hover {
+  color: var(--ifm-font-color-base);
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-toc-border-color) !important;
+}
+
+.menu {
+  padding: 1rem 0.5rem !important;
+  font-size: 13.5px;
+}
+
+.menu__link {
+  border-radius: 5px;
+  padding: 0.35rem 0.75rem;
+  font-weight: 400;
+  transition: color 0.12s, background 0.12s;
+}
+
+.menu__link--active,
+.menu__link--active:hover {
+  background: var(--ifm-menu-color-background-active);
+  color: var(--ifm-menu-color-active);
+  font-weight: 600;
+}
+
+.menu__link:hover {
+  background: var(--ifm-menu-color-background-hover);
+  color: var(--ifm-font-color-base);
+}
+
+/* Category labels */
+.menu__list-item-collapsible .menu__link {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ifm-font-color-secondary);
+  cursor: default;
+}
+
+.menu__list-item-collapsible .menu__link:hover {
+  background: transparent;
+  color: var(--ifm-font-color-secondary);
+}
+
+/* Nested list indent */
+.menu__list .menu__list {
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--ifm-toc-border-color);
+  margin-left: 0.75rem;
+}
+
+/* Collapsible guides top-level */
+.menu__list > .menu__list-item > .menu__list-item-collapsible > .menu__link {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ifm-font-color-secondary);
+}
+
+/* ============================================================
+   CONTENT AREA
+   ============================================================ */
+
+.markdown {
+  --ifm-h1-font-size: 2rem;
+  --ifm-h2-font-size: 1.35rem;
+  --ifm-h3-font-size: 1.1rem;
+}
+
+.markdown h1 {
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ifm-heading-color);
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.markdown h2 {
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ifm-heading-color);
+  margin-top: 2.5rem;
+}
+
+.markdown h3 {
+  font-weight: 600;
+  color: var(--ifm-heading-color);
+  margin-top: 1.75rem;
+}
+
+/* Inline code — amber tint */
+.markdown code:not(.codeBlockLines *) {
+  background: var(--ifm-code-background);
+  border: 1px solid rgba(245,165,36,0.18);
+  color: #f0b84a;
+  font-size: var(--ifm-code-font-size);
+  padding: var(--ifm-code-padding-vertical) var(--ifm-code-padding-horizontal);
+  border-radius: var(--ifm-code-border-radius);
+}
+
+[data-theme='light'] .markdown code:not(.codeBlockLines *) {
+  color: #b8720a;
+  background: rgba(245,165,36,0.08);
+  border-color: rgba(245,165,36,0.2);
+}
+
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+
+.prism-code {
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  border-radius: 8px !important;
+}
+
+/* Thin border on code blocks */
+[data-theme='dark'] .theme-code-block {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+[data-theme='light'] .theme-code-block {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Language label */
+.theme-code-block-highlighted-line {
+  background: rgba(245,165,36,0.12) !important;
+  border-left: 3px solid var(--ifm-color-primary) !important;
+  display: block;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+/* Scrollbar in code blocks */
+.prism-code::-webkit-scrollbar {
+  height: 6px;
+}
+.prism-code::-webkit-scrollbar-track {
+  background: transparent;
+}
+.prism-code::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+.markdown table {
+  font-size: 13.5px;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.markdown table th {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ifm-font-color-secondary);
+  background: transparent;
+  border-bottom: 1px solid var(--ifm-table-border-color);
+  padding: 0.6rem 0.9rem;
+}
+
+.markdown table td {
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid var(--ifm-table-border-color);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.markdown table tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown table tr:nth-child(even) {
+  background: var(--ifm-table-stripe-background);
+}
+
+/* ============================================================
+   ADMONITIONS
+   ============================================================ */
+
+.admonition {
+  border-radius: 6px;
+  border-left-width: 3px;
+  font-size: 14px;
+}
+
+.admonition-heading h5 {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+[data-theme='dark'] .admonition {
+  background: #1a1d24;
+}
+
+[data-theme='dark'] .admonition.alert--warning {
+  border-left-color: var(--ifm-color-primary);
+  background: rgba(245,165,36,0.07);
+}
+
+/* ============================================================
+   TOC (Table of Contents)
+   ============================================================ */
+
+.table-of-contents {
+  font-size: 13px;
+}
+
+.table-of-contents__link {
+  color: var(--ifm-font-color-secondary);
+  transition: color 0.12s;
+}
+
+.table-of-contents__link:hover,
+.table-of-contents__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.footer {
+  border-top: 1px solid var(--ifm-toc-border-color);
+  font-size: 13px;
+}
+
+.footer__title {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ifm-font-color-secondary);
+}
+
+.footer__link-item {
+  color: var(--ifm-font-color-secondary);
+  font-size: 13px;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-font-color-base);
+}
+
+.footer__copyright {
+  color: var(--ifm-font-color-secondary);
+  opacity: 0.6;
+  font-size: 12px;
+}
+
+/* ============================================================
+   HOMEPAGE HERO
+   ============================================================ */
+
+.eid-hero {
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  background: var(--ifm-background-color);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid background */
+.eid-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245,165,36,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,165,36,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%);
+  pointer-events: none;
+}
+
+/* Ember glow blob */
+.eid-hero::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(245,165,36,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.eid-hero__mark {
+  width: 64px;
+  height: auto;
+  margin-bottom: 1.75rem;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 16px rgba(245,165,36,0.3));
+}
+
+.eid-hero__title {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ifm-heading-color);
+  line-height: 1.1;
+  margin: 0 0 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.eid-hero__title span {
+  color: var(--ifm-color-primary);
+}
+
+.eid-hero__tagline {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--ifm-font-color-secondary);
+  max-width: 560px;
+  line-height: 1.6;
+  margin: 0 auto 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.eid-hero__ctas {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.eid-hero__cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  background: var(--ifm-color-primary);
+  color: #0f1117 !important;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: var(--ifm-font-family-monospace);
+  text-decoration: none !important;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.eid-hero__cta-primary:hover {
+  background: var(--ifm-color-primary-light);
+  transform: translateY(-1px);
+}
+
+.eid-hero__cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  background: transparent;
+  color: var(--ifm-font-color-base) !important;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none !important;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.eid-hero__cta-secondary:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   FEATURE CARDS
+   ============================================================ */
+
+.eid-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  max-width: 860px;
+  width: 100%;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.eid-feature-card {
+  padding: 1.75rem;
+  background: var(--ifm-background-surface-color);
+  transition: background 0.15s;
+}
+
+.eid-feature-card:hover {
+  background: #1a1d24;
+}
+
+[data-theme='light'] .eid-feature-card:hover {
+  background: #f0f0f3;
+}
+
+.eid-feature-card__icon {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  display: block;
+  color: var(--ifm-color-primary);
+}
+
+.eid-feature-card__title {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ifm-heading-color);
+  margin: 0 0 0.5rem;
+}
+
+.eid-feature-card__body {
+  font-size: 13.5px;
+  color: var(--ifm-font-color-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .eid-features {
+    grid-template-columns: 1fr;
+  }
+  .eid-hero__ctas {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* ============================================================
+   BREADCRUMBS
+   ============================================================ */
+
+.breadcrumbs__link {
+  font-size: 12.5px;
+  color: var(--ifm-font-color-secondary);
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--ifm-font-color-base);
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+
+.pagination-nav__link {
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 6px;
+  transition: border-color 0.12s;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.pagination-nav__label {
+  font-size: 14px;
+}
+
+/* ============================================================
+   SCROLLBAR (dark mode global)
+   ============================================================ */
+
+[data-theme='dark'] {
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+  scrollbar-width: thin;
+}
+
+[data-theme='dark'] *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+[data-theme='dark'] *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme='dark'] *::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+.DocSearch-Button {
+  border-radius: 6px !important;
+  background: var(--ifm-background-surface-color) !important;
+  border: 1px solid var(--ifm-toc-border-color) !important;
+}
+
+/* ============================================================
+   MISC POLISH
+   ============================================================ */
+
+/* Remove default Docusaurus blue outline on focus — use ember */
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Thin dividers */
+.markdown hr {
+  border: none;
+  border-top: 1px solid var(--ifm-toc-border-color);
+  margin: 2rem 0;
+}
+
+/* Blockquote */
+.markdown blockquote {
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-background-surface-color);
+  padding: 0.75rem 1rem;
+  border-radius: 0 4px 4px 0;
+  color: var(--ifm-font-color-secondary);
+}
+
+/* Doc page article */
+article .markdown {
+  max-width: 72ch;
+}
+
+/* Edit this page link */
+.theme-edit-this-page {
+  font-size: 12.5px;
+  color: var(--ifm-font-color-secondary);
+  opacity: 0.7;
+}
+
+/* Last updated */
+.theme-last-updated {
+  font-size: 12px;
+  color: var(--ifm-font-color-secondary);
+  opacity: 0.6;
+}
