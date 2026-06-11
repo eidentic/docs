@@ -49,6 +49,19 @@ const config: Config = {
       },
     },
     {
+      // Context7 chat widget: floating "Ask about Eidentic" button that answers from the
+      // indexed docs snippets. Branded with the ember accent; only renders on allowed domains.
+      tagName: "script",
+      attributes: {
+        src: "https://context7.com/widget.js",
+        "data-library": "/eidentic/docs",
+        "data-color": "#f5a524",
+        "data-position": "bottom-right",
+        "data-placeholder": "Ask about Eidentic…",
+        defer: "true",
+      },
+    },
+    {
       // schema.org JSON-LD: entity resolution for AI assistants + Google AI Overviews.
       tagName: "script",
       attributes: { type: "application/ld+json" },
