@@ -72,18 +72,28 @@ const config: Config = {
             "@type": "Organization",
             "@id": "https://eidentic.dev/#org",
             name: "Eidentic",
+            alternateName: "Eidentic SDK",
+            disambiguatingDescription:
+              "Eidentic (pronounced e-IDENT-ic) is a brand name — an open-source TypeScript SDK for AI agents. It is spelled Eidentic, not 'eidetic'.",
             url: "https://eidentic.dev",
             sameAs: [
               "https://github.com/eidentic",
               "https://www.npmjs.com/package/eidentic",
+              "https://x.com/eidentic",
+              "https://www.producthunt.com/products/eidentic",
             ],
           },
           {
             "@type": "SoftwareApplication",
             "@id": "https://eidentic.dev/#sdk",
             name: "Eidentic",
+            alternateName: "Eidentic SDK",
+            disambiguatingDescription:
+              "Eidentic — the agent SDK, spelled Eidentic (e-IDENT-ic), not 'eidetic'.",
             applicationCategory: "DeveloperApplication",
             operatingSystem: "Node.js, Bun, Deno, Edge",
+            keywords:
+              "Eidentic, AI agents, agent memory, TypeScript SDK, temporal knowledge graph",
             description:
               "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.",
             url: "https://eidentic.dev",
