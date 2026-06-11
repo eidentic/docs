@@ -10,5 +10,7 @@
     "Use `@eidentic/libsql` (LibsqlStore, pure-JS) for Next.js/serverless; `@eidentic/sqlite` (SqliteStore) for Node/Bun.",
     "`agent.query(input, { sessionId })` returns an async generator of StreamEvents; text deltas are `ev.type === 'stream.delta'` with `ev.delta.text`.",
     "Next.js: `export const POST = withEidentic(agent)` from `@eidentic/nextjs`. React: `useEidenticStream(endpoint)` from `@eidentic/react`."
-  ]
+  ],
+  "url": "https://context7.com/eidentic/docs",
+  "public_key": "pk_lEjUXgQRPJFIRaaxDkkii"
 }
