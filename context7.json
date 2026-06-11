@@ -1,0 +1,14 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Eidentic",
+  "description": "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.",
+  "folders": ["docs"],
+  "excludeFolders": ["node_modules", "build", ".docusaurus", "src", "static"],
+  "rules": [
+    "Eidentic is a TypeScript SDK published on npm as `eidentic` and `@eidentic/*`. Always use the TypeScript API and ESM imports.",
+    "Construct an agent with `new Agent({ id, model, store })`; wrap any AI SDK provider via `new AIModel(provider(modelId))`.",
+    "Use `@eidentic/libsql` (LibsqlStore, pure-JS) for Next.js/serverless; `@eidentic/sqlite` (SqliteStore) for Node/Bun.",
+    "`agent.query(input, { sessionId })` returns an async generator of StreamEvents; text deltas are `ev.type === 'stream.delta'` with `ev.delta.text`.",
+    "Next.js: `export const POST = withEidentic(agent)` from `@eidentic/nextjs`. React: `useEidenticStream(endpoint)` from `@eidentic/react`."
+  ]
+}
