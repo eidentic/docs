@@ -14,7 +14,7 @@ export default defineConfig({
         alt: "eidentic",
       },
       description:
-        "Agents that remember. An open-source TypeScript SDK with self-improving memory and production fundamentals built in.",
+        "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/eidentic/eidentic" }],
       customCss: ["./src/custom.css"],
       sidebar: [
