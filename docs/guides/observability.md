@@ -84,6 +84,32 @@ console.log("Dropped spans:", tracer.droppedSpans);
 
 ---
 
+## Audit bus
+
+Tracing answers *"what did the agent do, and how long did it take?"* — it does **not** answer *"what was refused, and why?"*. The audit bus fills that gap: an optional `onAuditEvent(event)` sink — wired identically on the `Agent` and on `createServer` — emits one typed stream of security/compliance events. Wiring the same sink to both gives a single unified audit log keyed by `scopeKey` / `principalId`.
+
+```ts
+import type { AuditEvent } from "@eidentic/types";
+
+const sink = (e: AuditEvent) => auditLog.append(e);
+
+const agent = new Agent({ id, model, store, onAuditEvent: sink });
+const app = createServer({ agents: { assistant: agent }, auth, onAuditEvent: sink });
+```
+
+| `type` | Emitted by | When |
+|---|---|---|
+| `tool.call` | Agent | every executed tool dispatch (success or error) |
+| `permission.denied` | Agent | a tool was refused at the gate (`reason: "denied" \| "gate-error"`) — never reaches `onPostToolUse` |
+| `erasure` | Agent | `agent.eraseScope()` fan-out, with per-subsystem + total deleted counts |
+| `auth.failure` | server | a request rejected with `401` (carries `route`) |
+| `quota.exceeded` | server | a request rejected with `402` (carries `scopeKey`, `reason`) |
+| `ratelimit.exceeded` | server | a request throttled with `429`, pre- or post-auth (carries `principalId`, `route`) |
+
+Every event carries an `at` (epoch-ms) timestamp. The sink is **best-effort and out-of-band**: it complements (does not replace) `onPostToolUse` and tracing, and a throwing sink is swallowed and logged at `warn` so it can never affect a run or a request. The `AuditEvent` union lives in `@eidentic/types`, so a custom store or log shipper can consume it without depending on `@eidentic/core`.
+
+---
+
 ## MCP governance
 
 `@eidentic/mcp` supports per-call tracing and server-side audit events for full end-to-end observability of every MCP tool call.

@@ -17,6 +17,7 @@ Every exported symbol ships inline JSDoc — hover in your editor or browse the 
 | `@eidentic/sqlite` | [npmjs.com](https://www.npmjs.com/package/@eidentic/sqlite) | [packages/sqlite](https://github.com/eidentic/eidentic/tree/main/packages/sqlite) | `SqliteStore` (better-sqlite3) |
 | `@eidentic/libsql` | [npmjs.com](https://www.npmjs.com/package/@eidentic/libsql) | [packages/libsql](https://github.com/eidentic/eidentic/tree/main/packages/libsql) | `LibsqlStore` (edge-safe, pure-JS) |
 | `@eidentic/postgres` | [npmjs.com](https://www.npmjs.com/package/@eidentic/postgres) | [packages/postgres](https://github.com/eidentic/eidentic/tree/main/packages/postgres) | `PostgresStore` |
+| `@eidentic/convex` | [npmjs.com](https://www.npmjs.com/package/@eidentic/convex) | [packages/convex](https://github.com/eidentic/eidentic/tree/main/packages/convex) | `ConvexStore` (StorePort + GraphPort), `ConvexVectorStore` — reactive, TS-native |
 | `@eidentic/workflow` | [npmjs.com](https://www.npmjs.com/package/@eidentic/workflow) | [packages/workflow](https://github.com/eidentic/eidentic/tree/main/packages/workflow) | `workflow`, `chain`, `parallel`, `map`, suspend/resume, registry |
 | `@eidentic/server` | [npmjs.com](https://www.npmjs.com/package/@eidentic/server) | [packages/server](https://github.com/eidentic/eidentic/tree/main/packages/server) | `createServer`, `serveNode`, auth adapters, webhooks |
 | `@eidentic/react` | [npmjs.com](https://www.npmjs.com/package/@eidentic/react) | [packages/react](https://github.com/eidentic/eidentic/tree/main/packages/react) | `useEidenticStream`, `useAsyncRun`, `useWorkflowList`, workflow hooks |
@@ -57,6 +58,7 @@ interface AgentConfig {
   onPostToolUse?: (info) => void;
   onPermissionRequest?: (toolId, input) => PermissionDecision;
   onCostThreshold?: (info: CostThresholdInfo) => void;
+  onAuditEvent?: (event: AuditEvent) => void; // security/compliance audit bus
   guardrails?: GuardrailPort | GuardrailPort[];
   subAgents?: Record<string, SubAgent>;
   compaction?: CompactionConfig;

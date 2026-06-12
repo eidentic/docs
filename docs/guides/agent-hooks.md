@@ -55,6 +55,29 @@ const agent = new Agent({
 | `durationMs` | `number` | Wall-clock time from dispatch start to completion |
 | `sessionId` | `string` | Current session id (empty string when not set) |
 
+## `onAuditEvent`
+
+A best-effort **audit bus** — one typed stream of security/compliance events. It complements `onPostToolUse` by surfacing the events a compliance log needs but that no other hook emits: permission **denials** (which never reach `onPostToolUse`, because a denied tool never executes) and right-to-erasure. The same `AuditEvent` type is emitted by `@eidentic/server`, so wiring one sink to both the Agent and the server yields a single unified audit log.
+
+```ts
+const agent = new Agent({
+  id: "assistant",
+  model,
+  store,
+  onAuditEvent: (e) => auditLog.append(e), // e.g. { type: "permission.denied", toolId, reason, scopeKey, at }
+});
+```
+
+The Agent emits these variants:
+
+| `type` | When | Key fields |
+|---|---|---|
+| `tool.call` | every executed dispatch (success or error) | `toolId`, `sessionId`, `scopeKey?`, `isError`, `durationMs` |
+| `permission.denied` | a tool was refused at the gate | `toolId`, `reason` (`"denied"` \| `"gate-error"`), `scopeKey?` |
+| `erasure` | `agent.eraseScope()` fan-out | `scopeKey`, `deleted.{store,vector,graph,total}`, `memorySkipped` |
+
+The HTTP server (`createServer({ onAuditEvent })`) adds `auth.failure` (401), `quota.exceeded` (402), and `ratelimit.exceeded` (429). Every event carries an `at` (epoch-ms) timestamp. A throwing sink is swallowed and logged at `warn` — it can never affect a run or a request. See the [observability guide](./observability.md) for the full event reference.
+
 ## `onPermissionRequest`
 
 Required when any tool has `sideEffect: "ask"`. The hook receives the call and must return `"allow"` or `"deny"` — it is the resolution point for human-in-the-loop tool approval.
