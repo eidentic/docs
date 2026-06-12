@@ -1,6 +1,11 @@
+import { createRequire } from "node:module";
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+
+// The config is an ES module, so there is no global `require`; derive one to resolve the
+// local-search theme by package path (the recommended way to register it).
+const require = createRequire(import.meta.url);
 
 const positioningSentence =
   "The open-source TypeScript SDK for AI agents with self-improving memory and production fundamentals built in.";
@@ -106,6 +111,21 @@ const config: Config = {
         ],
       }),
     },
+  ],
+
+  themes: [
+    [
+      // Offline full-text search (no external service / no Algolia approval needed).
+      // Adds a search bar to the navbar and indexes all docs at build time.
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        indexBlog: false,
+        docsRouteBasePath: "/",
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true,
+      },
+    ],
   ],
 
   plugins: [

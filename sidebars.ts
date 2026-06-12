@@ -101,6 +101,18 @@ const sidebars: SidebarsConfig = {
       ],
     },
     {
+      type: "category",
+      label: "Adapters",
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { type: "doc", id: "adapters/stores", label: "Stores" },
+        { type: "doc", id: "adapters/vector-stores", label: "Vector stores" },
+        { type: "doc", id: "adapters/embedders", label: "Embedders & rerankers" },
+        { type: "doc", id: "adapters/sandboxes", label: "Sandboxes" },
+      ],
+    },
+    {
       type: "doc",
       id: "reference",
       label: "API Reference",
