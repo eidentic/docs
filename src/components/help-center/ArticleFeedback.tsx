@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon } from '../ui/icon';
 import { cn } from '@/lib/utils';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.usegately.com/api';
 
 interface ArticleFeedbackProps {
   articleId: string;
@@ -12,6 +10,10 @@ interface ArticleFeedbackProps {
   horizontal?: boolean;
 }
 
+type FeedbackValue = 'helpful' | 'not_helpful';
+
+const FEEDBACK_API_BASE = '/api/feedback';
+
 export function ArticleFeedback({
   articleId,
   projectId,
@@ -19,229 +21,169 @@ export function ArticleFeedback({
   compact = false,
   horizontal = false,
 }: ArticleFeedbackProps) {
-  const [feedback, setFeedback] = useState<'helpful' | 'not_helpful' | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackValue | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setFeedback(null);
     setSubmitted(false);
     setIsSubmitting(false);
-    
+    setErrorMessage(null);
+
     const storedFeedback = localStorage.getItem(`article_feedback_${articleId}`);
-    if (storedFeedback) {
-      setFeedback(storedFeedback as 'helpful' | 'not_helpful');
+    if (storedFeedback === 'helpful' || storedFeedback === 'not_helpful') {
+      setFeedback(storedFeedback);
       setSubmitted(true);
     }
   }, [articleId]);
 
   useEffect(() => {
-    if (!articleId || !projectId) return;
-    
+    if (!articleId || !projectId) {
+      return;
+    }
+
     const viewKey = `article_view_${articleId}`;
-    if (sessionStorage.getItem(viewKey)) return;
-    
-    fetch(`${API_BASE_URL}/public/projects/${projectId}/help-articles/${articleId}/view`, {
+    if (sessionStorage.getItem(viewKey)) {
+      return;
+    }
+
+    fetch(`${FEEDBACK_API_BASE}/view`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-    }).catch(console.error);
-    
+      body: JSON.stringify({ articleId, projectId }),
+    }).catch((error) => {
+      console.error('Failed to record article view:', error);
+    });
+
     sessionStorage.setItem(viewKey, 'true');
   }, [articleId, projectId]);
 
   const handleFeedback = async (isHelpful: boolean) => {
-    if (submitted || isSubmitting) return;
-    
+    if (submitted || isSubmitting) {
+      return;
+    }
+
     setIsSubmitting(true);
-    const feedbackType = isHelpful ? 'helpful' : 'not_helpful';
-    
+    setErrorMessage(null);
+
+    const feedbackType: FeedbackValue = isHelpful ? 'helpful' : 'not_helpful';
+
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/public/projects/${projectId}/help-articles/${articleId}/feedback`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ helpful: isHelpful }),
-        }
-      );
-      
-      if (response.ok) {
-        setFeedback(feedbackType);
-        setSubmitted(true);
-        localStorage.setItem(`article_feedback_${articleId}`, feedbackType);
+      const response = await fetch(`${FEEDBACK_API_BASE}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          articleId,
+          projectId,
+          helpful: isHelpful,
+        }),
+      });
+
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error || 'Feedback could not be saved.');
       }
+
+      const storedValue = payload?.vote === 'not_helpful' ? 'not_helpful' : feedbackType;
+      setFeedback(storedValue);
+      setSubmitted(true);
+      localStorage.setItem(`article_feedback_${articleId}`, storedValue);
     } catch (error) {
       console.error('Failed to submit feedback:', error);
+      setErrorMessage('Could not save feedback right now.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const buttonClassName = cn(
+    'flex items-center gap-1.5 rounded-lg border text-xs transition-colors',
+    compact ? 'px-3 py-1.5' : 'px-4 py-2',
+    isDark
+      ? 'border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+      : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50',
+    isSubmitting && 'cursor-not-allowed opacity-50',
+  );
+
+  const renderSubmittedState = (message: string) => (
+    <div className="flex items-center gap-1.5">
+      <Icon icon="hugeicons:checkmark-01" className="h-3.5 w-3.5 text-green-500" />
+      <span className={cn(compact ? 'text-xs' : 'text-sm', isDark ? 'text-zinc-400' : 'text-zinc-500')}>
+        {message}
+      </span>
+    </div>
+  );
+
+  const renderButtons = () => (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => handleFeedback(true)}
+        disabled={isSubmitting}
+        className={buttonClassName}
+        type="button"
+      >
+        <Icon icon="hugeicons:thumbs-up" className={compact ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
+        <span className={compact ? 'text-xs' : 'text-sm'}>Yes</span>
+      </button>
+      <button
+        onClick={() => handleFeedback(false)}
+        disabled={isSubmitting}
+        className={buttonClassName}
+        type="button"
+      >
+        <Icon icon="hugeicons:thumbs-down" className={compact ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
+        <span className={compact ? 'text-xs' : 'text-sm'}>No</span>
+      </button>
+    </div>
+  );
+
   if (compact) {
     if (horizontal) {
       return (
-        <div className="flex items-center justify-between w-full gap-3">
-          <p className={cn(
-            "text-xs font-medium whitespace-nowrap",
-            isDark ? "text-zinc-400" : "text-zinc-500"
-          )}>
-            Was this helpful?
-          </p>
-          {submitted ? (
-            <div className="flex items-center gap-1.5">
-              <Icon icon="hugeicons:checkmark-01" className="h-3.5 w-3.5 text-green-500" />
-              <span className={cn(
-                "text-xs whitespace-nowrap",
-                isDark ? "text-zinc-400" : "text-zinc-500"
-              )}>
-                Thanks!
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleFeedback(true)}
-                disabled={isSubmitting}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs",
-                  isDark 
-                    ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                    : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600",
-                  isSubmitting && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                <Icon icon="hugeicons:thumbs-up" className="h-3.5 w-3.5" />
-                Yes
-              </button>
-              <button
-                onClick={() => handleFeedback(false)}
-                disabled={isSubmitting}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs",
-                  isDark 
-                    ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                    : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600",
-                  isSubmitting && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                <Icon icon="hugeicons:thumbs-down" className="h-3.5 w-3.5" />
-                No
-              </button>
-            </div>
-          )}
+        <div className="flex w-full items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className={cn('text-xs font-medium whitespace-nowrap', isDark ? 'text-zinc-400' : 'text-zinc-500')}>
+              Was this helpful?
+            </p>
+            {errorMessage && (
+              <p className="mt-1 text-[11px] text-red-500">
+                {errorMessage}
+              </p>
+            )}
+          </div>
+          {submitted ? renderSubmittedState('Thanks!') : renderButtons()}
         </div>
       );
     }
 
     return (
       <div>
-        <p className={cn(
-          "text-xs font-medium mb-3",
-          isDark ? "text-zinc-400" : "text-zinc-500"
-        )}>
+        <p className={cn('mb-3 text-xs font-medium', isDark ? 'text-zinc-400' : 'text-zinc-500')}>
           Was this helpful?
         </p>
-        {submitted ? (
-          <div className="flex items-center gap-1.5">
-            <Icon icon="hugeicons:checkmark-01" className="h-3.5 w-3.5 text-green-500" />
-            <span className={cn(
-              "text-xs",
-              isDark ? "text-zinc-400" : "text-zinc-500"
-            )}>
-              Thanks!
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleFeedback(true)}
-              disabled={isSubmitting}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs",
-                isDark 
-                  ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                  : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600",
-                isSubmitting && "opacity-50 cursor-not-allowed"
-              )}
-            >
-              <Icon icon="hugeicons:thumbs-up" className="h-3.5 w-3.5" />
-              Yes
-            </button>
-            <button
-              onClick={() => handleFeedback(false)}
-              disabled={isSubmitting}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs",
-                isDark 
-                  ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                  : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600",
-                isSubmitting && "opacity-50 cursor-not-allowed"
-              )}
-            >
-              <Icon icon="hugeicons:thumbs-down" className="h-3.5 w-3.5" />
-              No
-            </button>
-          </div>
-        )}
+        {submitted ? renderSubmittedState('Thanks!') : renderButtons()}
+        {errorMessage && <p className="mt-2 text-[11px] text-red-500">{errorMessage}</p>}
       </div>
     );
   }
 
   if (horizontal) {
     return (
-      <div className={cn(
-        "mt-8 pt-6 border-t",
-        isDark ? "border-zinc-700" : "border-zinc-200"
-      )}>
-        <div className="flex items-center justify-between w-full">
+      <div className={cn('mt-8 border-t pt-6', isDark ? 'border-zinc-700' : 'border-zinc-200')}>
+        <div className="flex w-full items-center justify-between gap-3">
           {submitted ? (
-            <div className="flex items-center gap-2">
-              <Icon icon="hugeicons:checkmark-01" className="h-4 w-4 text-green-500" />
-              <span className={cn(
-                "text-sm",
-                isDark ? "text-zinc-400" : "text-zinc-600"
-              )}>
-                Thanks for your feedback!
-              </span>
-            </div>
+            renderSubmittedState('Thanks for your feedback!')
           ) : (
             <>
-              <p className={cn(
-                "text-sm font-medium flex items-center",
-                isDark ? "text-zinc-300" : "text-zinc-700"
-              )}>
-                Was this article helpful?
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleFeedback(true)}
-                  disabled={isSubmitting}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg border",
-                    isDark 
-                      ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                      : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700",
-                    isSubmitting && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  <Icon icon="hugeicons:thumbs-up" className="h-4 w-4" />
-                  <span className="text-sm">Yes</span>
-                </button>
-                <button
-                  onClick={() => handleFeedback(false)}
-                  disabled={isSubmitting}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg border",
-                    isDark 
-                      ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                      : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700",
-                    isSubmitting && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  <Icon icon="hugeicons:thumbs-down" className="h-4 w-4" />
-                  <span className="text-sm">No</span>
-                </button>
+              <div>
+                <p className={cn('text-sm font-medium', isDark ? 'text-zinc-300' : 'text-zinc-700')}>
+                  Was this article helpful?
+                </p>
+                {errorMessage && <p className="mt-1 text-xs text-red-500">{errorMessage}</p>}
               </div>
+              {renderButtons()}
             </>
           )}
         </div>
@@ -250,59 +192,17 @@ export function ArticleFeedback({
   }
 
   return (
-    <div className={cn(
-      "mt-8 pt-6 border-t",
-      isDark ? "border-zinc-700" : "border-zinc-200"
-    )}>
+    <div className={cn('mt-8 border-t pt-6', isDark ? 'border-zinc-700' : 'border-zinc-200')}>
       <div className="flex flex-col gap-3">
         {submitted ? (
-          <div className="flex items-center gap-2">
-            <Icon icon="hugeicons:checkmark-01" className="h-4 w-4 text-green-500" />
-            <span className={cn(
-              "text-sm",
-              isDark ? "text-zinc-400" : "text-zinc-600"
-            )}>
-              Thanks for your feedback!
-            </span>
-          </div>
+          renderSubmittedState('Thanks for your feedback!')
         ) : (
           <>
-            <p className={cn(
-              "text-sm font-medium",
-              isDark ? "text-zinc-300" : "text-zinc-700"
-            )}>
+            <p className={cn('text-sm font-medium', isDark ? 'text-zinc-300' : 'text-zinc-700')}>
               Was this article helpful?
             </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleFeedback(true)}
-                disabled={isSubmitting}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg border",
-                  isDark 
-                    ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                    : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700",
-                  isSubmitting && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                <Icon icon="hugeicons:thumbs-up" className="h-4 w-4" />
-                <span className="text-sm">Yes</span>
-              </button>
-              <button
-                onClick={() => handleFeedback(false)}
-                disabled={isSubmitting}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg border",
-                  isDark 
-                    ? "border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300" 
-                    : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700",
-                  isSubmitting && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                <Icon icon="hugeicons:thumbs-down" className="h-4 w-4" />
-                <span className="text-sm">No</span>
-              </button>
-            </div>
+            {renderButtons()}
+            {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
           </>
         )}
       </div>

@@ -341,7 +341,7 @@ export function AIChatPanel({
   };
 
   const getArticleUrl = (slug: string) => {
-    // If a sub-path is configured (e.g. usegately.com/docs), use the public-facing origin + sub-path
+    // If a sub-path is configured (e.g. docs.example.com/docs), use the public-facing origin + sub-path
     const subPath = (window as any).__projectContext?.subPath;
     if (subPath) {
       return `${window.location.origin}${subPath}/article/${slug}`;

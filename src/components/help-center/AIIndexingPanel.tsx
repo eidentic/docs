@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { Icon } from '../ui/icon';
 import { cn } from '@/lib/utils';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.usegately.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 interface IndexingStatus {
   totalArticles: number;

@@ -35,7 +35,7 @@ const actualOrigin = forwardedHost ? `${Astro.url.protocol}//${forwardedHost}` :
 // reconstruct the canonical URL using sub_path_domain + sub_path + current path.
 // The worker strips the sub-path before proxying, so Astro.url.pathname is already
 // the stripped path (e.g. /getting-started, not /docs/getting-started).
-// Also read X-Gately-Sub-Path header sent by the worker as a reliable fallback.
+// Also read X-App-Sub-Path header sent by the proxy as a reliable fallback.
 const subPathDomain = config.sub_path_domain || null;
 const subPath = config.sub_path || '';
 const publicOrigin = subPathDomain

@@ -9,7 +9,7 @@ interface CustomScalarReferenceProps {
 }
 
 /**
- * Custom Scalar API Reference with Gately branding
+ * Custom Scalar API Reference with local branding
  * Uses @scalar/api-reference with custom configuration
  */
 export function CustomScalarReference({
@@ -42,7 +42,7 @@ export function CustomScalarReference({
       console.log('[CustomScalarReference] Container ref exists, proceeding with initialization');
 
       // Construct the OpenAPI spec URL
-      const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'https://api.usegately.com/api';
+      const apiBaseUrl = import.meta.env.PUBLIC_API_URL || '/api';
       const specUrl = `${apiBaseUrl}/public/projects/${projectId}/openapi`;
 
       console.log('[CustomScalarReference] Loading Scalar with spec URL:', specUrl);
@@ -58,7 +58,7 @@ export function CustomScalarReference({
           theme: isDark ? 'dark' : 'light',
         layout: 'modern',
         customCss: `
-        /* Gately Custom Styling */
+        /* Custom docs styling */
         :root {
           --scalar-color-1: ${primaryColor};
           --scalar-color-2: ${primaryColor};
@@ -220,7 +220,7 @@ export function CustomScalarReference({
       },
       servers: [
         {
-          url: 'https://api.usegately.com/api/v1',
+          url: 'https://api.example.com/api/v1',
           description: 'Production',
         },
       ],

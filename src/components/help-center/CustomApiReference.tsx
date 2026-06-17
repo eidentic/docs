@@ -58,13 +58,13 @@ function MethodBadge({ method }: { method: string }) {
   );
 }
 
-export function CustomApiReference({ 
-  specUrl, 
-  primaryColor = '#f04438', 
+export function CustomApiReference({
+  specUrl,
+  primaryColor = '#f04438',
   isDark = false,
   headingFont,
   bodyFont,
-  baseUrl = 'https://api.usegately.com/api/v1'
+  baseUrl = 'https://api.example.com/api/v1'
 }: CustomApiReferenceProps) {
   console.log('[CustomApiReference] Component rendering with specUrl:', specUrl);
   

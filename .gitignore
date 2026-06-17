@@ -11,3 +11,6 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal

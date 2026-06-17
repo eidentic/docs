@@ -151,7 +151,7 @@ export default function ArticlePageWrapper({
       if (m) {
         let extractedPath = m[2];
         try {
-          const apiBaseUrl = config.api_base_url || 'https://api.usegately.com/api/v1';
+          const apiBaseUrl = config.api_base_url || 'https://api.example.com/api/v1';
           const baseUrlObj = new URL(apiBaseUrl);
           const basePath = baseUrlObj.pathname.replace(/\/$/, '');
           if (basePath && extractedPath.startsWith(basePath)) {
@@ -464,7 +464,7 @@ export default function ArticlePageWrapper({
                       <span className={isDark ? 'text-zinc-300' : 'text-zinc-700'}>
                         {(() => {
                           try {
-                            const apiBaseUrl = config.api_base_url || 'https://api.usegately.com/api/v1';
+                            const apiBaseUrl = config.api_base_url || 'https://api.example.com/api/v1';
                             const baseUrlObj = new URL(apiBaseUrl);
                             const basePath = baseUrlObj.pathname.replace(/\/$/, '');
                             return basePath + path;
@@ -506,7 +506,7 @@ export default function ArticlePageWrapper({
                   headingFont={config.heading_font}
                   bodyFont={config.body_font}
                   isApiReference={isApiRefArticle}
-                  apiBaseUrl={config.api_base_url || 'https://api.usegately.com/api/v1'}
+                  apiBaseUrl={config.api_base_url || 'https://api.example.com/api/v1'}
                   article={article}
                 />
               </ErrorBoundary>
@@ -673,7 +673,7 @@ export default function ArticlePageWrapper({
           onClose={() => setTryItModalOpen(false)}
           method={method}
           path={path}
-          baseUrl={config.api_base_url || 'https://api.usegately.com/api/v1'}
+          baseUrl={config.api_base_url || 'https://api.example.com/api/v1'}
           primaryColor={config.primary_color}
           isDark={isDark}
           description={article.excerpt}

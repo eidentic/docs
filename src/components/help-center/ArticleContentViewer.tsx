@@ -105,7 +105,7 @@ export function ArticleContentViewer({
   showToc = false, onTocGenerated, scrollContainerRef,
   headingFont, bodyFont, showFeedback = false,
   articleId, projectId, horizontalFeedback = false,
-  isApiReference = false, apiBaseUrl = 'https://api.usegately.com/api/v1', article,
+  isApiReference = false, apiBaseUrl = 'https://api.example.com/api/v1', article,
 }: ArticleContentViewerProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -170,7 +170,11 @@ export function ArticleContentViewer({
   useEffect(() => {
     if (!isApiReference || !hasEndpoint || !projectId) return;
     
-    const specUrl = `https://api.usegately.com/api/public/projects/${projectId}/openapi`;
+    const publicApiBaseUrl =
+      (typeof window !== 'undefined' && (window as any).__projectContext?.apiBaseUrl) ||
+      import.meta.env.PUBLIC_API_URL ||
+      '/api';
+    const specUrl = `${publicApiBaseUrl.replace(/\/$/, '')}/public/projects/${projectId}/openapi`;
     
     fetch(specUrl)
       .then(res => res.json())

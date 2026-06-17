@@ -71,7 +71,7 @@ export async function getArticles(projectId: string): Promise<Article[]> {
         ? await cfFetch(`${API_BASE_URL}/public/projects/${projectId}/help-articles?limit=500`, 120, controller.signal)
         : await fetch(`${API_BASE_URL}/public/projects/${projectId}/help-articles?limit=500`, {
             signal: controller.signal,
-            headers: { 'User-Agent': 'Gately-HelpCenter/1.0' }
+            headers: { 'User-Agent': 'Eidentic-Docs/1.0' }
           });
       
       clearTimeout(timeoutId);
@@ -111,7 +111,7 @@ export async function getCategories(projectId: string): Promise<Category[]> {
         ? await cfFetch(`${API_BASE_URL}/public/projects/${projectId}/help-article-categories`, 120, controller.signal)
         : await fetch(`${API_BASE_URL}/public/projects/${projectId}/help-article-categories`, {
             signal: controller.signal,
-            headers: { 'User-Agent': 'Gately-HelpCenter/1.0' }
+            headers: { 'User-Agent': 'Eidentic-Docs/1.0' }
           });
 
       clearTimeout(timeoutId);
