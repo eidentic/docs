@@ -89,9 +89,11 @@ Current notable env vars:
 ```bash
 PUBLIC_API_URL=https://your-api.example.com/api
 PUBLIC_PROJECT_ID=your-project-uuid-here
+PUBLIC_SITE_URL=https://docs.eidentic.dev
 
 HOST=0.0.0.0
 PORT=4321
+FEEDBACK_DB_PATH=./data/feedback.sqlite
 
 MEILISEARCH_HOST=http://127.0.0.1:7700
 MEILISEARCH_INDEX=eidentic_docs
@@ -133,6 +135,8 @@ Recommended environment variables:
 ```bash
 HOST=0.0.0.0
 PORT=4321
+PUBLIC_SITE_URL=https://docs.eidentic.dev
+FEEDBACK_DB_PATH=./data/feedback.sqlite
 MEILISEARCH_HOST=...
 MEILISEARCH_INDEX=eidentic_docs
 MEILISEARCH_SEARCH_API_KEY=...
@@ -140,6 +144,7 @@ MEILISEARCH_ADMIN_API_KEY=...
 ```
 
 If you expose a custom domain in Dokploy, route it to container port `4321`.
+Mount `/app/data` as a persistent volume if you want feedback analytics to survive redeploys.
 
 ### Why Dockerfile instead of Nixpacks / Railpack
 

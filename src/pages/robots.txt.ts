@@ -1,10 +1,10 @@
 import type { APIRoute } from 'astro';
+import { getHelpCenterConfig } from '../lib/localData';
+import { getPublicBaseUrl } from '../lib/site-url';
 
 export const GET: APIRoute = async ({ request, url }) => {
-  const forwardedHost =
-    request.headers.get('X-Forwarded-Host') || request.headers.get('X-Original-Host');
-  const baseUrl = forwardedHost ? `${url.protocol}//${forwardedHost}` : url.origin;
-
+  const config = await getHelpCenterConfig();
+  const baseUrl = getPublicBaseUrl(request, url, config);
   const robots = `# Eidentic docs
 User-agent: OAI-SearchBot
 Allow: /
@@ -55,6 +55,7 @@ User-agent: *
 Allow: /
 
 Content-Signal: search=yes, ai-train=yes, ai-input=yes
+LLM-Content: ${baseUrl}/llms.txt
 Sitemap: ${baseUrl}/sitemap.xml
 `;
 

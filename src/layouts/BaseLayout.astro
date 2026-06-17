@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '../styles/globals.css';
+import { buildPublicUrl, getPublicBaseUrl, getPublicOrigin, toAbsoluteUrl } from '../lib/site-url';
 
 interface Props {
   title: string;
@@ -27,9 +28,7 @@ const headingFont = config.heading_font || 'system-ui, sans-serif';
 const bodyFont = config.body_font || 'system-ui, sans-serif';
 const isDark = config.theme_mode === 'dark';
 
-// Get the original domain from headers (for proxied custom domains)
-const forwardedHost = Astro.request.headers.get('X-Forwarded-Host') || Astro.request.headers.get('X-Original-Host');
-const actualOrigin = forwardedHost ? `${Astro.url.protocol}//${forwardedHost}` : Astro.url.origin;
+// Resolve the public origin from env or proxy headers.
 
 // If the user has configured a sub-path deployment (e.g. yourdomain.com/docs),
 // reconstruct the canonical URL using sub_path_domain + sub_path + current path.
@@ -38,20 +37,19 @@ const actualOrigin = forwardedHost ? `${Astro.url.protocol}//${forwardedHost}` :
 // Also read X-App-Sub-Path header sent by the proxy as a reliable fallback.
 const subPathDomain = config.sub_path_domain || null;
 const subPath = config.sub_path || '';
-const publicOrigin = subPathDomain
-  ? `${Astro.url.protocol}//${subPathDomain}`
-  : actualOrigin;
+const publicOrigin = getPublicOrigin(Astro.request, Astro.url, config);
 const publicPathPrefix = subPathDomain && subPath ? subPath : '';
 const actualUrl = `${publicOrigin}${publicPathPrefix}${Astro.url.pathname}${Astro.url.search}`;
 
 // SEO metadata
-const metaTitle = config.meta_title || title;
+const metaTitle = title || config.meta_title || config.portal_name || 'Eidentic Docs';
 const metaDescription = description || config.meta_description || config.welcome_subtitle;
-const ogImageUrl = ogImage || config.og_image_url || config.logo_url;
-const ogLogoUrl = config.logo_url;
-const faviconUrl = config.favicon_url;
+const ogImageUrl = toAbsoluteUrl(ogImage || config.og_image_url || config.logo_url, Astro.request, Astro.url, config);
+const ogLogoUrl = toAbsoluteUrl(config.logo_url, Astro.request, Astro.url, config);
+const faviconUrl = toAbsoluteUrl(config.favicon_url, Astro.request, Astro.url, config);
 const canonicalUrl = actualUrl;
-const baseUrl = subPathDomain ? `${publicOrigin}${publicPathPrefix}` : (config.subdomain_url || actualOrigin);
+const baseUrl = getPublicBaseUrl(Astro.request, Astro.url, config);
+const websiteSearchUrl = buildPublicUrl(Astro.request, Astro.url, '/api/search?q={search_term_string}', config);
 ---
 
 <!DOCTYPE html>
@@ -227,6 +225,7 @@ const baseUrl = subPathDomain ? `${publicOrigin}${publicPathPrefix}` : (config.s
     <meta name="title" content={metaTitle} />
     {metaDescription && <meta name="description" content={metaDescription} />}
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="text/plain" title="LLMs.txt" href={`${baseUrl}/llms.txt`} />
     
     {/* Favicon */}
     {faviconUrl && <link rel="icon" type="image/png" href={faviconUrl} />}
@@ -310,12 +309,19 @@ const baseUrl = subPathDomain ? `${publicOrigin}${publicPathPrefix}` : (config.s
       "name": config.portal_name || 'Help Center',
       "url": canonicalUrl,
       ...(metaDescription && { "description": metaDescription }),
-      ...(config.logo_url && {
-        "logo": {
-          "@type": "ImageObject",
-          "url": config.logo_url
+      ...(ogType !== 'article' && {
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": websiteSearchUrl,
+          "query-input": "required name=search_term_string"
         }
       }),
+        ...(ogLogoUrl && {
+          "logo": {
+            "@type": "ImageObject",
+            "url": ogLogoUrl
+          }
+        }),
       ...(ogType === 'article' && article && {
         "headline": metaTitle,
         "datePublished": article.publishedTime,
@@ -327,12 +333,12 @@ const baseUrl = subPathDomain ? `${publicOrigin}${publicPathPrefix}` : (config.s
         "publisher": {
           "@type": "Organization",
           "name": config.portal_name || 'Help Center',
-          ...(config.logo_url && {
-            "logo": {
-              "@type": "ImageObject",
-              "url": config.logo_url
-            }
-          })
+            ...(ogLogoUrl && {
+              "logo": {
+                "@type": "ImageObject",
+                "url": ogLogoUrl
+              }
+            })
         },
         ...(ogImageUrl && {
           "image": {
@@ -386,8 +392,8 @@ const baseUrl = subPathDomain ? `${publicOrigin}${publicPathPrefix}` : (config.s
       "@type": "Organization",
       "name": config.portal_name || 'Help Center',
       "url": baseUrl,
-      ...(config.logo_url && {
-        "logo": config.logo_url
+      ...(ogLogoUrl && {
+        "logo": ogLogoUrl
       }),
       ...(metaDescription && {
         "description": metaDescription

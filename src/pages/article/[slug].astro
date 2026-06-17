@@ -3,6 +3,7 @@
 export const prerender = false;
 
 import { getArticles, getCategories, getHelpCenterConfig, getFolders } from '../../lib/localData';
+import { buildPublicUrl } from '../../lib/site-url';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticlePageWrapper from '../../components/ArticlePageWrapper';
 
@@ -86,7 +87,12 @@ const safeArticle = articleBlocks
   : article;
 
 // Generate LLM copy links
-const articleUrl = `${Astro.url.origin}${Astro.url.pathname}`;
+const articleUrl = buildPublicUrl(
+  Astro.request,
+  Astro.url,
+  `/article/${article.slug}`,
+  helpCenterConfig,
+);
 ---
 
 <BaseLayout 

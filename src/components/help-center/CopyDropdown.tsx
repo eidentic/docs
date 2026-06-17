@@ -40,42 +40,18 @@ type AssistantProvider = 'chatgpt' | 'claude';
 const PROMPT_URL_MAX_LENGTH = 3500;
 const PROMPT_CLIPBOARD_MAX_LENGTH = 12000;
 
-export function CopyDropdown({
-  article,
-  categoryName,
-  articleUrl,
-  chatgptLink,
-  claudeLink,
-  isDark,
-  allArticles = [],
-}: CopyDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+function decodeHtmlEntities(value: string) {
+  return value
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ');
+}
 
-  const getLiveArticleUrl = () => {
-    if (typeof window === 'undefined') {
-      return articleUrl;
-    }
-
-    return window.location.href;
-  };
-
-  const getArticleMarkdownUrl = () => {
-    if (typeof window === 'undefined') {
-      return article.slug ? `${articleUrl.replace(/\/$/, '')}.txt` : `${articleUrl}.txt`;
-    }
-
-    const basePath = getBasePath();
-    const slug = article.slug || '';
-    return `${window.location.origin}${basePath}/article/${slug}.txt`;
-  };
-
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    window.setTimeout(() => setToastMessage(null), 2400);
-  };
-
-  const stripHtml = (html: string) =>
+function stripHtml(html: string) {
+  return decodeHtmlEntities(
     html
       .replace(/<\/p>/gi, '\n\n')
       .replace(/<br\s*\/?>/gi, '\n')
@@ -103,19 +79,49 @@ export function CopyDropdown({
         ).trim();
         return `\n\`\`\`\n${cleanCode}\n\`\`\`\n`;
       })
-      .replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, (_match, code) => `\`${decodeHtmlEntities(code)}\``)
+      .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, (_match, content) => {
+        const block = decodeHtmlEntities(content.replace(/<[^>]*>/g, '').trim());
+        return `\n> ${block.replace(/\n+/g, '\n> ')}\n`;
+      })
       .replace(/<[^>]*>/g, '')
       .replace(/\n{3,}/g, '\n\n')
-      .trim();
+      .trim(),
+  );
+}
 
-  const decodeHtmlEntities = (value: string) =>
-    value
-      .replace(/&#x27;|&#39;/g, "'")
-      .replace(/&quot;/g, '"')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&')
-      .replace(/&nbsp;/g, ' ');
+export function CopyDropdown({
+  article,
+  categoryName,
+  articleUrl,
+  chatgptLink,
+  claudeLink,
+  isDark,
+  allArticles = [],
+}: CopyDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const getLiveArticleUrl = () => {
+    if (typeof window === 'undefined') {
+      return articleUrl;
+    }
+
+    return window.location.href.split('#')[0];
+  };
+
+  const getArticleMarkdownUrl = () => {
+    if (typeof window === 'undefined') {
+      return article.slug ? `${articleUrl.replace(/\/$/, '')}.txt` : `${articleUrl}.txt`;
+    }
+
+    const currentUrl = new URL(window.location.href);
+    return `${currentUrl.origin}${currentUrl.pathname.replace(/\/$/, '')}.txt${currentUrl.search}`;
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    window.setTimeout(() => setToastMessage(null), 2400);
+  };
 
   const buildMarkdown = () => {
     const currentArticleUrl = getLiveArticleUrl();
@@ -137,12 +143,12 @@ export function CopyDropdown({
     const markdown = buildMarkdown();
     const trimmedMarkdown =
       markdown.length > maxLength
-        ? `${markdown.slice(0, maxLength).trim()}\n\n[Content truncated for share link]`
+        ? `${markdown.slice(0, maxLength).trim()}\n\n[Content truncated, use source URL for full context]`
         : markdown;
 
     return [
-      'Use this Eidentic documentation page as context.',
-      'Answer questions using the page first, and mention the source URL when helpful.',
+      'Use this Eidentic documentation page as the primary context.',
+      'Prefer the page content first and cite the source URL when useful.',
       '',
       trimmedMarkdown,
     ].join('\n');
@@ -150,7 +156,6 @@ export function CopyDropdown({
 
   const buildAssistantUrl = (baseUrl: string, provider: AssistantProvider, prompt: string) => {
     const placeholderPattern = /\{\{?\s*prompt\s*\}?\}/i;
-
     if (placeholderPattern.test(baseUrl)) {
       return baseUrl.replace(placeholderPattern, encodeURIComponent(prompt));
     }
@@ -199,15 +204,14 @@ export function CopyDropdown({
 
   const viewAllArticlesMarkdown = () => {
     const basePath = getBasePath();
-    const allArticlesUrl = `${window.location.origin}${basePath}/articles.txt`;
+    const allArticlesUrl = `${window.location.origin}${basePath || ''}/articles.txt`;
     window.open(allArticlesUrl, '_blank', 'noopener,noreferrer');
     setIsOpen(false);
   };
 
-  const directButtonStyle =
-    isDark
-      ? 'border-zinc-800/70 bg-zinc-900/70 text-white hover:bg-zinc-900'
-      : 'border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50';
+  const directButtonStyle = isDark
+    ? 'border-zinc-800/70 bg-zinc-900/70 text-white hover:bg-zinc-900'
+    : 'border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50';
 
   return (
     <>

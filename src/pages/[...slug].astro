@@ -3,6 +3,7 @@
 export const prerender = false;
 
 import { getArticles, getCategories, getHelpCenterConfig, getFaqs, getFolders } from '../lib/localData';
+import { buildPublicUrl } from '../lib/site-url';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HelpCenterHome from '../components/HelpCenterHome.tsx';
 import ArticlePageWrapper from '../components/ArticlePageWrapper.tsx';
@@ -161,7 +162,9 @@ const getArticleExcerpt = () => {
 
 const articleExcerpt = article ? getArticleExcerpt() : '';
 const categoryName = article ? getCategoryName(article.category_id) : '';
-const articleUrl = article ? `${Astro.url.origin}${Astro.url.pathname}` : '';
+const articleUrl = article
+  ? buildPublicUrl(Astro.request, Astro.url, `/article/${article.slug}`, helpCenterConfig)
+  : '';
 ---
 
 {pageType === 'folder' && folder && (

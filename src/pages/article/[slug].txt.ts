@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
-import { getArticles, getCategories } from '../../lib/localData';
+import { getArticles, getCategories, getHelpCenterConfig } from '../../lib/localData';
+import { buildPublicUrl } from '../../lib/site-url';
 
 export const prerender = false;
 
@@ -81,20 +82,13 @@ function htmlToPlainText(html: string) {
   return collapseBlankLines(decodeHtmlEntities(text));
 }
 
-function getPublicOrigin(request: Request, url: URL) {
-  const forwardedProto = request.headers.get('x-forwarded-proto') || url.protocol.replace(':', '');
-  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('x-original-host');
-
-  if (forwardedHost) {
-    return `${forwardedProto}://${forwardedHost}`;
-  }
-
-  return url.origin;
-}
-
 export const GET: APIRoute = async ({ params, request, url }) => {
   const { slug } = params;
-  const [allArticles, categories] = await Promise.all([getArticles(), getCategories()]);
+  const [allArticles, categories, config] = await Promise.all([
+    getArticles(),
+    getCategories(),
+    getHelpCenterConfig(),
+  ]);
   const article = allArticles.find((item) => item.slug === slug);
 
   if (!article) {
@@ -102,12 +96,12 @@ export const GET: APIRoute = async ({ params, request, url }) => {
   }
 
   const categoryName = categories.find((item) => item.id === article.category_id)?.name || 'Uncategorized';
-  const publicOrigin = getPublicOrigin(request, url);
+  const articleUrl = buildPublicUrl(request, url, `/article/${article.slug}`, config);
   const plainText = htmlToPlainText(article.content);
 
   const markdown = [
     '---',
-    `URL: ${publicOrigin}/article/${article.slug}`,
+    `URL: ${articleUrl}`,
     `Title: ${article.title}`,
     `Category: ${categoryName}`,
     '---',
