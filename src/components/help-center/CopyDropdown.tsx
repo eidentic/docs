@@ -52,6 +52,24 @@ export function CopyDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const getLiveArticleUrl = () => {
+    if (typeof window === 'undefined') {
+      return articleUrl;
+    }
+
+    return window.location.href;
+  };
+
+  const getArticleMarkdownUrl = () => {
+    if (typeof window === 'undefined') {
+      return article.slug ? `${articleUrl.replace(/\/$/, '')}.txt` : `${articleUrl}.txt`;
+    }
+
+    const basePath = getBasePath();
+    const slug = article.slug || '';
+    return `${window.location.origin}${basePath}/article/${slug}.txt`;
+  };
+
   const showToast = (message: string) => {
     setToastMessage(message);
     window.setTimeout(() => setToastMessage(null), 2400);
@@ -100,8 +118,9 @@ export function CopyDropdown({
       .replace(/&nbsp;/g, ' ');
 
   const buildMarkdown = () => {
+    const currentArticleUrl = getLiveArticleUrl();
     const cleanContent = stripHtml(article.content);
-    return `---\nURL: ${articleUrl}\nTitle: ${article.title}\nCategory: ${categoryName}\n---\n\n${cleanContent}`;
+    return `---\nURL: ${currentArticleUrl}\nTitle: ${article.title}\nCategory: ${categoryName}\n---\n\n${cleanContent}`;
   };
 
   const copyText = async (text: string) => {
@@ -174,7 +193,7 @@ export function CopyDropdown({
   };
 
   const viewFullPageMarkdown = () => {
-    window.open(`${articleUrl}.txt`, '_blank', 'noopener,noreferrer');
+    window.open(getArticleMarkdownUrl(), '_blank', 'noopener,noreferrer');
     setIsOpen(false);
   };
 
