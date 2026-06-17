@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "build-with-eidentic",
+      "type": "skill-md",
+      "description": "Write TypeScript that builds an AI agent with long-term memory using the Eidentic SDK. Use when scaffolding an agent, adding memory/recall, choosing a store adapter, or wiring Eidentic into Next.js, React, or a standalone server.",
+      "url": "/.well-known/agent-skills/build-with-eidentic/SKILL.md",
+      "digest": "sha256:f79932ab4ae22618bcf14e61ce87b53286606a54a2ea885d2cbb59dfe67b1bdf"
+    }
+  ]
+}
