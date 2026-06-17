@@ -35,6 +35,11 @@ interface CopyDropdownProps {
   }>;
 }
 
+type AssistantProvider = 'chatgpt' | 'claude';
+
+const PROMPT_URL_MAX_LENGTH = 3500;
+const PROMPT_CLIPBOARD_MAX_LENGTH = 12000;
+
 export function CopyDropdown({
   article,
   categoryName,
@@ -42,149 +47,262 @@ export function CopyDropdown({
   chatgptLink,
   claudeLink,
   isDark,
-  primaryColor,
-  projectId,
   allArticles = [],
-  categories = [],
 }: CopyDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const isMounted = true;
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const stripHtml = (html: string) => {
-    return html
-      .replace(/<\/p>/g, '\n\n')
-      .replace(/<br\s*\/?>/g, '\n')
-      .replace(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/g, '\n## $1\n')
-      .replace(/<[^>]*>?/gm, '');
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    window.setTimeout(() => setToastMessage(null), 2400);
   };
 
-  const copyAsMarkdown = () => {
-    const title = article.title;
-    const category = categoryName;
-    const url = articleUrl;
+  const stripHtml = (html: string) =>
+    html
+      .replace(/<\/p>/gi, '\n\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/li>/gi, '\n')
+      .replace(/<li[^>]*>/gi, '- ')
+      .replace(/<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/gi, (_match, level, text) => {
+        const prefix = '#'.repeat(Number(level));
+        return `\n${prefix} ${text}\n`;
+      })
+      .replace(/<pre[^>]*data-language="([^"]+)"[^>]*>[\s\S]*?<code>([\s\S]*?)<\/code><\/pre>/gi, (_match, language, code) => {
+        const cleanCode = decodeHtmlEntities(
+          code
+            .replace(/<\/span>/gi, '')
+            .replace(/<span[^>]*>/gi, '')
+            .replace(/<br\s*\/?>/gi, '\n'),
+        ).trim();
+        return `\n\`\`\`${language}\n${cleanCode}\n\`\`\`\n`;
+      })
+      .replace(/<pre[^>]*>[\s\S]*?<code>([\s\S]*?)<\/code><\/pre>/gi, (_match, code) => {
+        const cleanCode = decodeHtmlEntities(
+          code
+            .replace(/<\/span>/gi, '')
+            .replace(/<span[^>]*>/gi, '')
+            .replace(/<br\s*\/?>/gi, '\n'),
+        ).trim();
+        return `\n\`\`\`\n${cleanCode}\n\`\`\`\n`;
+      })
+      .replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, (_match, code) => `\`${decodeHtmlEntities(code)}\``)
+      .replace(/<[^>]*>/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+  const decodeHtmlEntities = (value: string) =>
+    value
+      .replace(/&#x27;|&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&nbsp;/g, ' ');
+
+  const buildMarkdown = () => {
     const cleanContent = stripHtml(article.content);
-    const markdown = `---\nURL: ${url}\nTitle: ${title}\nCategory: ${category}\n---\n\n${cleanContent}`;
-    navigator.clipboard.writeText(markdown);
-    setShowToast(true);
+    return `---\nURL: ${articleUrl}\nTitle: ${article.title}\nCategory: ${categoryName}\n---\n\n${cleanContent}`;
+  };
+
+  const copyText = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+  };
+
+  const copyAsMarkdown = async () => {
+    await copyText(buildMarkdown());
     setIsOpen(false);
-    setTimeout(() => setShowToast(false), 2000);
+    showToast('Markdown copied');
+  };
+
+  const buildAssistantPrompt = (maxLength: number) => {
+    const markdown = buildMarkdown();
+    const trimmedMarkdown =
+      markdown.length > maxLength
+        ? `${markdown.slice(0, maxLength).trim()}\n\n[Content truncated for share link]`
+        : markdown;
+
+    return [
+      'Use this Eidentic documentation page as context.',
+      'Answer questions using the page first, and mention the source URL when helpful.',
+      '',
+      trimmedMarkdown,
+    ].join('\n');
+  };
+
+  const buildAssistantUrl = (baseUrl: string, provider: AssistantProvider, prompt: string) => {
+    const placeholderPattern = /\{\{?\s*prompt\s*\}?\}/i;
+
+    if (placeholderPattern.test(baseUrl)) {
+      return baseUrl.replace(placeholderPattern, encodeURIComponent(prompt));
+    }
+
+    try {
+      const url = new URL(baseUrl);
+      const hostname = url.hostname.toLowerCase();
+
+      if (provider === 'chatgpt' && (hostname.includes('chatgpt.com') || hostname.includes('openai.com'))) {
+        url.searchParams.set('q', prompt);
+      }
+
+      if (provider === 'claude' && hostname.includes('claude.ai')) {
+        url.searchParams.set('q', prompt);
+      }
+
+      return url.toString();
+    } catch {
+      return baseUrl;
+    }
+  };
+
+  const openInAssistant = async (provider: AssistantProvider) => {
+    const promptForClipboard = buildAssistantPrompt(PROMPT_CLIPBOARD_MAX_LENGTH);
+    const promptForUrl = buildAssistantPrompt(PROMPT_URL_MAX_LENGTH);
+    const baseUrl = provider === 'chatgpt' ? chatgptLink : claudeLink;
+    const destinationUrl = buildAssistantUrl(baseUrl, provider, promptForUrl);
+    const providerLabel = provider === 'chatgpt' ? 'ChatGPT' : 'Claude';
+
+    try {
+      await copyText(promptForClipboard);
+      window.open(destinationUrl, '_blank', 'noopener,noreferrer');
+      showToast(`${providerLabel} prompt copied`);
+    } catch {
+      window.open(destinationUrl, '_blank', 'noopener,noreferrer');
+      showToast(`${providerLabel} opened`);
+    }
+
+    setIsOpen(false);
   };
 
   const viewFullPageMarkdown = () => {
-    // Navigate to .txt version of the article
-    const slug = article.slug || 'page';
-    window.open(`${getBasePath()}/article/${slug}.txt`, '_blank');
+    window.open(`${articleUrl}.txt`, '_blank', 'noopener,noreferrer');
     setIsOpen(false);
   };
 
   const viewAllArticlesMarkdown = () => {
-    // Navigate to all articles .txt file
-    window.open('/articles.txt', '_blank');
+    const basePath = getBasePath();
+    const allArticlesUrl = `${window.location.origin}${basePath}/articles.txt`;
+    window.open(allArticlesUrl, '_blank', 'noopener,noreferrer');
     setIsOpen(false);
   };
 
-  if (!isMounted) return null;
+  const directButtonStyle =
+    isDark
+      ? 'border-zinc-800/70 bg-zinc-900/70 text-white hover:bg-zinc-900'
+      : 'border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50';
 
   return (
     <>
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <button
+            type="button"
             className={cn(
-              "flex items-center h-[30px] rounded-xl border text-xs font-semibold shadow-sm hover:bg-accent focus:outline-none",
-              isDark
-                ? 'bg-background border-border/50 text-foreground'
-                : 'bg-card border-border/50 text-foreground'
+              'group inline-flex h-10 items-center overflow-hidden rounded-xl border text-sm font-medium shadow-sm transition-colors',
+              directButtonStyle,
             )}
+            aria-label="Copy article options"
           >
-            {/* Left: direct copy action */}
             <div
-              className="flex items-center gap-2 px-3 h-full hover:bg-accent/60 rounded-l-xl transition-colors"
-              onClick={(e) => { e.stopPropagation(); copyAsMarkdown(); }}
+              className="flex h-full items-center gap-2 px-3 transition-colors"
+              onClick={(event) => {
+                event.stopPropagation();
+                void copyAsMarkdown();
+              }}
             >
-              {showToast
-                ? <Icon icon="hugeicons:checkmark-01" className="h-3.5 w-3.5 text-green-500" />
-                : <Icon icon="hugeicons:copy-01" className="h-3.5 w-3.5" />
-              }
-              <span>{showToast ? 'Copied!' : 'Copy as Markdown'}</span>
+              <Icon
+                icon={toastMessage ? 'hugeicons:checkmark-01' : 'hugeicons:copy-01'}
+                className={cn('h-3.5 w-3.5', toastMessage && 'text-green-500')}
+              />
+              <span>{toastMessage ? 'Copied!' : 'Copy as Markdown'}</span>
             </div>
-            {/* Right: open dropdown */}
-            <div className="border-l px-2 h-full flex items-center border-border/50 hover:bg-accent/60 rounded-r-xl transition-colors">
+
+            <div className="flex h-full items-center border-l border-border/50 px-2 transition-colors">
               <Icon icon="hugeicons:arrow-down-01" className="h-3 w-3" />
             </div>
           </button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end" className="w-80">
-          <DropdownMenuItem onClick={copyAsMarkdown} className="flex items-center gap-2 p-1.5 cursor-pointer">
-            <div className="w-[30px] h-[30px] rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+          <DropdownMenuItem
+            onClick={() => {
+              void copyAsMarkdown();
+            }}
+            className="flex cursor-pointer items-center gap-2 p-1.5"
+          >
+            <div className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg bg-muted">
               <Icon icon="hugeicons:copy-01" className="h-4 w-4" />
             </div>
             <div className="flex-1 text-left">
-              <p className="font-medium text-sm">Copy page</p>
+              <p className="text-sm font-medium">Copy page</p>
             </div>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={viewFullPageMarkdown} className="flex items-center gap-2 p-1.5 cursor-pointer">
-            <div className="w-[30px] h-[30px] rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+          <DropdownMenuItem
+            onClick={viewFullPageMarkdown}
+            className="flex cursor-pointer items-center gap-2 p-1.5"
+          >
+            <div className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg bg-muted">
               <Icon icon="hugeicons:file-view" className="h-4 w-4" />
             </div>
             <div className="flex-1 text-left">
-              <p className="font-medium text-sm">View as Markdown</p>
+              <p className="text-sm font-medium">View as Markdown</p>
             </div>
           </DropdownMenuItem>
 
           {allArticles.length > 0 && (
-            <DropdownMenuItem onClick={viewAllArticlesMarkdown} className="flex items-center gap-2 p-1.5 cursor-pointer">
-              <div className="w-[30px] h-[30px] rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+            <DropdownMenuItem
+              onClick={viewAllArticlesMarkdown}
+              className="flex cursor-pointer items-center gap-2 p-1.5"
+            >
+              <div className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg bg-muted">
                 <Icon icon="hugeicons:file-02" className="h-4 w-4" />
               </div>
               <div className="flex-1 text-left">
-                <p className="font-medium text-sm">View all articles</p>
+                <p className="text-sm font-medium">View all articles</p>
               </div>
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem
             onClick={() => {
-              window.open(chatgptLink, '_blank');
-              setIsOpen(false);
+              void openInAssistant('chatgpt');
             }}
-            className="flex items-center gap-2 p-1.5 cursor-pointer"
+            className="flex cursor-pointer items-center gap-2 p-1.5"
           >
-            <div className="w-[30px] h-[30px] rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+            <div className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg bg-muted">
               <Icon icon="simple-icons:openai" className="h-4 w-4" />
             </div>
-            <div className="flex-1 text-left flex items-center justify-between">
-              <p className="font-medium text-sm">Open in ChatGPT</p>
+            <div className="flex flex-1 items-center justify-between text-left">
+              <p className="text-sm font-medium">Open in ChatGPT</p>
               <Icon icon="hugeicons:arrow-up-right-01" className="h-3 w-3 opacity-50" />
             </div>
           </DropdownMenuItem>
 
           <DropdownMenuItem
             onClick={() => {
-              window.open(claudeLink, '_blank');
-              setIsOpen(false);
+              void openInAssistant('claude');
             }}
-            className="flex items-center gap-2 p-1.5 cursor-pointer"
+            className="flex cursor-pointer items-center gap-2 p-1.5"
           >
-            <div className="w-[30px] h-[30px] rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+            <div className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg bg-muted">
               <Icon icon="hugeicons:claude" className="h-4 w-4" />
             </div>
-            <div className="flex-1 text-left flex items-center justify-between">
-              <p className="font-medium text-sm">Open in Claude</p>
+            <div className="flex flex-1 items-center justify-between text-left">
+              <p className="text-sm font-medium">Open in Claude</p>
               <Icon icon="hugeicons:arrow-up-right-01" className="h-3 w-3 opacity-50" />
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Toast for dropdown-triggered copy */}
-      {showToast && (
-        <div className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg text-sm font-medium z-50 ${
-          isDark ? 'bg-zinc-800 text-white' : 'bg-white text-zinc-900 border border-zinc-200'
-        }`}>
-          Copied as Markdown ✓
+      {toastMessage && (
+        <div
+          className={cn(
+            'fixed bottom-4 right-4 z-50 rounded-lg px-4 py-2 text-sm font-medium shadow-lg',
+            isDark ? 'bg-zinc-800 text-white' : 'border border-zinc-200 bg-white text-zinc-900',
+          )}
+        >
+          {toastMessage}
         </div>
       )}
     </>
