@@ -8,6 +8,7 @@
     "Eidentic is a TypeScript SDK published on npm as `eidentic` and `@eidentic/*`. Always use the TypeScript API and ESM imports.",
     "Construct an agent with `new Agent({ id, model, store })`; wrap any AI SDK provider via `new AIModel(provider(modelId))`.",
     "Use `@eidentic/libsql` (LibsqlStore, pure-JS) for Next.js/serverless; `@eidentic/sqlite` (SqliteStore) for Node/Bun.",
+    "For new Convex apps, install `@eidentic/convex` as a Convex Component via `@eidentic/convex/convex.config.js`; keep the app-functions path only for compatibility or external HTTP workers.",
     "`agent.query(input, { sessionId })` returns an async generator of StreamEvents; text deltas are `ev.type === 'stream.delta'` with `ev.delta.text`.",
     "Next.js: `export const POST = withEidentic(agent)` from `@eidentic/nextjs`. React: `useEidenticStream(endpoint)` from `@eidentic/react`."
   ],
