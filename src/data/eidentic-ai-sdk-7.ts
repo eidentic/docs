@@ -109,6 +109,7 @@ export const aiSdk7MigrationArticle = {
   created_at: UPDATED_AT,
   updated_at: UPDATED_AT,
   content: `<p>Eidentic now targets <code>ai@^7</code> for AI SDK-backed packages. This page lists the compatibility changes and the migration steps for existing users.</p>
+<p><strong>Published in SDK release <a href="https://github.com/eidentic/eidentic/releases/tag/v0.3.11">v0.3.11</a>.</strong> This release includes <code>@eidentic/model@0.3.0</code>, <code>@eidentic/server@0.4.0</code>, <code>@eidentic/nextjs@0.3.0</code>, <code>@eidentic/studio@0.2.0</code>, <code>eidentic@0.2.0</code>, and <code>create-eidentic@0.2.0</code>.</p>
 <h2>What changed</h2>
 <ul>
 <li><code>@eidentic/model</code> now calls AI SDK with <code>instructions</code>, <code>output</code>, <code>result.output</code>, <code>result.stream</code>, and <code>usage.inputTokenDetails.cacheReadTokens</code>.</li>
