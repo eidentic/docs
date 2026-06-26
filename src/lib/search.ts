@@ -21,26 +21,34 @@ interface SearchDocument extends SearchHit {
   content_text: string;
 }
 
-const fallbackDocuments: SearchDocument[] =
+const articleDocuments: SearchDocument[] = articles
+  .filter((article) => article.is_published)
+  .map((article) => {
+    const category = categories.find((item) => item.id === article.category_id);
+    const contentText = stripHtml(article.content);
+    return {
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      excerpt: article.excerpt || '',
+      category_id: article.category_id,
+      category_name: category?.name || 'General',
+      content_text: contentText,
+      content_preview: contentText.slice(0, 420),
+      url: `/article/${article.slug}`,
+    };
+  });
+
+const generatedDocuments =
   Array.isArray(searchDocuments) && searchDocuments.length > 0
     ? (searchDocuments as SearchDocument[])
-    : articles
-        .filter((article) => article.is_published)
-        .map((article) => {
-          const category = categories.find((item) => item.id === article.category_id);
-          const contentText = stripHtml(article.content);
-          return {
-            id: article.id,
-            title: article.title,
-            slug: article.slug,
-            excerpt: article.excerpt || '',
-            category_id: article.category_id,
-            category_name: category?.name || 'General',
-            content_text: contentText,
-            content_preview: contentText.slice(0, 420),
-            url: `/article/${article.slug}`,
-          };
-        });
+    : [];
+
+const fallbackDocuments: SearchDocument[] = [
+  ...new Map(
+    [...generatedDocuments, ...articleDocuments].map((document) => [document.id, document]),
+  ).values(),
+];
 
 function stripHtml(value: string) {
   return value
