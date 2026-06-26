@@ -7,13 +7,14 @@
 import { articles as rawArticles, categories as rawCategories, folders as rawFolders } from '@/data/index';
 import { faqs as rawFaqs } from '@/data/faqs';
 import { helpCenterConfig } from '@/data/config';
+import type { Article } from './api';
 
 export type { Article, Category, Faq } from './api';
 
 export type HelpCenterConfig = typeof helpCenterConfig;
 
 export async function getArticles(_projectId?: string) {
-  return rawArticles.filter((article) => article.is_published);
+  return (rawArticles as readonly Article[]).filter((article) => article.is_published);
 }
 
 export async function getCategories(_projectId?: string) {
